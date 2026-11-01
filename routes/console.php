@@ -1,0 +1,13 @@
+<?php
+
+use Illuminate\Foundation\Inspiring;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schedule;
+
+Artisan::command('inspire', function () {
+    $this->comment(Inspiring::quote());
+})->purpose('Display an inspiring quote');
+
+Schedule::command('app:cleanup-temp-uploads')->hourly();
+Schedule::command('app:prune-stale-records')->daily();
+Schedule::command('activitylog:clean')->weekly();

@@ -1,0 +1,38 @@
+services:
+  app:
+    image: ghcr.io/pokertour/silo:latest
+    container_name: silo_app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+
+      db:
+        condition: service_healthy
+    volumes:
+      - ./storage:/app/storage
+
+  db:
+    image: mariadb:11
+    container_name: silo_db
+    restart: unless-stopped
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE:-silo}
+      - MYSQL_USER=${DB_USERNAME:-isouser}
+      # Pas de mot de passe par défaut : à définir obligatoirement dans .env
+      - MYSQL_PASSWORD=${DB_PASSWORD:?DB_PASSWORD doit être défini dans .env}
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD:?DB_ROOT_PASSWORD doit être défini dans .env}
+    volumes:
+      - silo_db_data:/var/lib/mysql
+    # La base n'est pas exposée sur l'hôte : seul le conteneur app y accède.
+    # Pour un accès d'administration ponctuel, préférer "127.0.0.1:3306:3306".
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  silo_db_data:

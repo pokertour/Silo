@@ -1,0 +1,48 @@
+{
+	# Enable FrankenPHP
+	frankenphp
+	order php_server before file_server
+}
+
+:8080 {
+	# Set the webroot to our public directory
+	root * /app/public
+
+	# Enable compression
+	encode zstd gzip
+
+	# Les ISOs ne doivent jamais être servis directement depuis le lien public
+	# /storage (anciennes installations utilisant le stockage « local_public ») :
+	# les téléchargements passent obligatoirement par Laravel (droits, partages).
+	@isoFiles path /storage/iso_files/* /storage/chunks/* /storage/temp_iso/*
+	respond @isoFiles 404
+
+	# Aucun script ne doit être exécutable depuis les fichiers uploadés
+	@storageScripts path_regexp ^/storage/.*\.(php|phar|phtml)$
+	respond @storageScripts 404
+
+	# Route requests to the PHP server (Laravel)
+	php_server
+
+	# Log requests
+	log {
+		level INFO
+	}
+
+	# Cache static assets for better performance
+	@static {
+		file
+		path *.js *.css *.png *.jpg *.jpeg *.gif *.svg *.ico *.woff *.woff2
+	}
+	header @static Cache-Control "public, max-age=31536000"
+
+	# Security Headers
+	header {
+		X-Frame-Options "SAMEORIGIN"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		-Server
+		-X-Powered-By
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+	}
+}
