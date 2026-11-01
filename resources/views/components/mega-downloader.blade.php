@@ -1,38 +1,31 @@
+{{-- Gestionnaire de téléchargement : progression, débit, reprise via File System Access API. --}}
 <div x-data="megaDownloader()" @start-mega-download.window="startDownload($event.detail.url, $event.detail.filename)"
-     x-show="downloading" style="display: none;"
-     x-transition:enter="transition ease-out duration-300"
-     x-transition:enter-start="opacity-0 translate-y-4"
-     x-transition:enter-end="opacity-100 translate-y-0"
-     x-transition:leave="transition ease-in duration-200"
-     x-transition:leave-start="opacity-100 translate-y-0"
-     x-transition:leave-end="opacity-0 translate-y-4"
-     class="fixed bottom-6 right-6 w-96 bg-slate-900 border border-slate-700/50 rounded-2xl shadow-2xl z-50 overflow-hidden">
-    
-    <div class="p-5">
-        <div class="flex items-center justify-between mb-3">
-            <h4 class="font-bold text-slate-200 flex items-center gap-2">
-                <svg class="animate-bounce" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary-hex, #6366f1)" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                {{ __('app.Téléchargement en cours...') }}
-            </h4>
-            <div class="text-xs font-mono font-bold text-indigo-400" x-text="progressPercent + '%'"></div>
+     x-show="downloading" x-cloak
+     x-transition:enter="transition duration-300 ease-out" x-transition:enter-start="translate-y-4 opacity-0"
+     x-transition:leave="transition duration-200 ease-in" x-transition:leave-end="translate-y-4 opacity-0"
+     class="fixed inset-x-3 bottom-24 z-[85] sm:inset-x-auto sm:bottom-5 sm:left-5 lg:left-[284px] sm:w-[380px]">
+    <div class="overflow-hidden rounded-2xl border border-line-strong bg-elevated/95 shadow-2xl backdrop-blur-xl">
+        <div class="flex items-center gap-3 p-4">
+            <x-ui.disc size="sm" class="animate-spin-slow" />
+            <div class="min-w-0 flex-1">
+                <p class="spec">{{ __('app.Téléchargement en cours...') }}</p>
+                <p class="truncate text-sm font-semibold text-ink" x-text="filename"></p>
+            </div>
+            <span class="font-display text-2xl font-semibold tabular-nums text-ink" x-text="progressPercent + '%'"></span>
         </div>
-        
-        <p class="text-xs text-slate-400 truncate mb-4" x-text="filename"></p>
-        
-        <div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden mb-2 relative">
-            <div class="h-full bg-indigo-500 transition-all duration-300 ease-out" :style="`width: ${progressPercent}%`"></div>
-            <!-- Animated shine effect -->
-            <div class="absolute top-0 bottom-0 left-0 right-0 bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-[shimmer_1.5s_infinite]"></div>
+        <div class="px-4">
+            <div class="meter"><span :style="`width: ${progressPercent}%`"></span></div>
         </div>
-        
-        <div class="flex items-center justify-between text-[10px] text-slate-500 font-medium uppercase tracking-wider">
+        <div class="flex justify-between px-4 pt-2 pb-4 font-mono text-[11px] text-ink-3">
             <span x-text="formatBytes(loadedBytes) + ' / ' + formatBytes(totalBytes)"></span>
             <span x-text="speed + ' MB/s'"></span>
         </div>
-        
-        <div x-show="error" class="mt-3 p-2 bg-red-500/10 border border-red-500/20 rounded-lg text-xs text-red-400" x-text="error"></div>
+        <div x-show="error" class="flex items-start gap-2 border-t border-line bg-danger/10 px-4 py-3 text-xs text-danger">
+            <i class="ri-error-warning-line text-sm"></i>
+            <span class="flex-1" x-text="error"></span>
+            <button type="button" class="font-semibold underline" @click="downloading = false; error = null">{{ __('app.Fermer') }}</button>
+        </div>
     </div>
-    
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('megaDownloader', () => ({
@@ -77,7 +70,7 @@
                     
                     try {
                         const response = await fetch(url);
-                        if (!response.ok) throw new Error("{{ __('app.Erreur de connexion au serveur') }}");
+                        if (!response.ok) throw new Error(@js(__('app.Erreur de connexion au serveur')));
                         
                         const contentLength = response.headers.get('content-length');
                         this.totalBytes = contentLength ? parseInt(contentLength, 10) : 0;
@@ -130,12 +123,12 @@
                         
                         setTimeout(() => {
                             this.downloading = false;
-                            window.dispatchEvent(new CustomEvent('toast-magic', { detail: { type: 'success', message: "{{ __('app.Téléchargement terminé avec succès !') }}" }}));
+                            window.dispatchEvent(new CustomEvent('toast-magic', { detail: { type: 'success', title: this.filename, message: @js(__('app.Téléchargement terminé avec succès !')) }}));
                         }, 1500);
                         
                     } catch (e) {
                         if (e.name !== 'AbortError') {
-                            this.error = "{{ __('app.Erreur lors du téléchargement :') }} " + e.message;
+                            this.error = @js(__('app.Erreur lors du téléchargement :')) + ' ' + e.message;
                             console.error(e);
                         } else {
                             this.downloading = false;
@@ -145,9 +138,4 @@
             }));
         });
     </script>
-    <style>
-        @keyframes shimmer {
-            100% { transform: translateX(100%); }
-        }
-    </style>
 </div>

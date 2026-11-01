@@ -1,61 +1,62 @@
-<x-layouts.guest :title="$share->isoFile->name">
+@php
+    $file = $share->isoFile;
+    $extension = pathinfo($file->file_path, PATHINFO_EXTENSION);
+@endphp
+<x-layouts.guest :title="$file->name">
     <x-slot:meta>
         <meta property="og:type" content="website">
-        <meta property="og:title" content="{{ $share->isoFile->name }}">
-        <meta property="og:description" content="{{ __('app.Télécharger') }} · {{ $share->isoFile->size_human }}{{ $share->isoFile->version ? ' · v'.$share->isoFile->version : '' }}">
+        <meta property="og:title" content="{{ $file->name }}">
+        <meta property="og:description" content="{{ __('app.Télécharger') }} · {{ $file->size_human }}{{ $file->version ? ' · v'.$file->version : '' }}">
         <meta property="og:site_name" content="{{ \App\Models\SystemSetting::get('app_name', 'Silo') }}">
         <meta name="twitter:card" content="summary">
         <meta name="robots" content="noindex">
     </x-slot:meta>
-    <div class="w-full max-w-lg glass rounded-3xl p-8 shadow-2xl relative overflow-hidden text-center">
-        <div class="flex justify-center mb-6">
-            <div class="bg-indigo-600 p-4 rounded-3xl shadow-lg shadow-indigo-500/20">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-            </div>
-        </div>
-        <h1 class="text-2xl font-bold mb-1">{{ $share->isoFile->name }}</h1>
-        <div class="flex items-center justify-center gap-2 text-slate-500 text-sm mb-8">
-            <span>{{ $share->isoFile->size_human }}</span>
-            @if($share->isoFile->version)
-            <span class="w-1 h-1 bg-slate-700 rounded-full"></span>
-            <span>{{ $share->isoFile->version }}</span>
-            @endif
-        </div>
 
-        @if($share->isoFile->checksum)
-            <div class="mb-8 text-left bg-black/20 rounded-2xl p-4" x-data="{ copied: false }">
-                <div class="flex items-center justify-between mb-1">
-                    <span class="text-xs text-slate-500 font-medium uppercase tracking-widest">SHA-256</span>
-                    <button @click="navigator.clipboard.writeText('{{ $share->isoFile->checksum }}'); copied = true; setTimeout(() => copied = false, 2000)"
-                            class="text-xs text-slate-500 hover:text-indigo-400 transition-colors cursor-pointer flex items-center gap-1">
-                        <span x-show="!copied">{{ __('app.Copier') }}</span>
-                        <span x-show="copied" x-cloak class="text-emerald-400">{{ __('app.Copié !') }}</span>
-                    </button>
+    <div class="w-full max-w-xl animate-rise">
+        <div class="card overflow-hidden">
+            <div class="relative flex flex-col items-center px-6 pt-10 pb-8 text-center sm:px-10">
+                <div class="pointer-events-none absolute inset-0 backdrop-dots opacity-70 [mask-image:radial-gradient(circle_at_50%_30%,black,transparent_70%)]"></div>
+                <x-ui.disc :file="$file" size="xl" class="relative animate-spin-slow" />
+                <p class="eyebrow relative mt-7">{{ __('app.Fichier partagé avec vous') }}</p>
+                <h1 class="relative mt-2 text-balance font-display text-3xl font-semibold tracking-tight text-ink">{{ $file->name }}</h1>
+                <p class="relative mt-3 flex flex-wrap justify-center gap-1.5">
+                    <span class="badge">{{ $file->size_human }}</span>
+                    @if ($extension)<span class="badge">{{ $extension }}</span>@endif
+                    @if ($file->version)<span class="badge">v{{ $file->version }}</span>@endif
+                    @if ($file->architecture)<span class="badge">{{ $file->architecture }}</span>@endif
+                </p>
+                @if ($file->description)
+                    <p class="relative mt-5 max-w-md text-[15px] text-ink-2">{{ $file->description }}</p>
+                @endif
+            </div>
+
+            @if ($file->checksum)
+                <div class="mx-6 mb-6 rounded-2xl border border-line bg-bg-2 p-4 sm:mx-10" x-data="copyable(@js($file->checksum))">
+                    <div class="mb-2 flex items-center justify-between">
+                        <span class="spec"><i class="ri-fingerprint-line"></i> SHA-256</span>
+                        <button type="button" class="btn btn-ghost btn-sm -mr-2" @click="copy()">
+                            <i :class="copied ? 'ri-check-line text-ok' : 'ri-file-copy-line'"></i><span x-text="copied ? @js(__('app.Copié !')) : @js(__('app.Copier'))"></span>
+                        </button>
+                    </div>
+                    <code class="block font-mono text-[12.5px] leading-relaxed break-all text-ink-2 select-all">{{ $file->checksum }}</code>
                 </div>
-                <code class="text-xs text-slate-400 break-all select-all">{{ $share->isoFile->checksum }}</code>
-            </div>
-        @endif
-
-        @if($share->isoFile->description)
-            <p class="text-slate-400 text-sm mb-10 bg-black/20 p-4 rounded-2xl italic">"{{ $share->isoFile->description }}"</p>
-        @endif
-
-        <button @click.prevent="$dispatch('start-mega-download', { url: @js(route('share.download', $share->token)), filename: @js($share->isoFile->name.'.'.pathinfo($share->isoFile->file_path, PATHINFO_EXTENSION)) })" class="cursor-pointer w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-2xl shadow-xl shadow-indigo-500/20 transition-all flex items-center justify-center gap-2 text-lg">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-            {{ __('app.Télécharger') }}
-        </button>
-
-        <div class="mt-10 pt-6 border-t border-white/5 flex items-center justify-center gap-6 text-xs text-slate-500 font-medium uppercase tracking-widest">
-            <div class="flex items-center gap-1">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
-                Silo
-            </div>
-            @if($share->expires_at)
-            <div class="flex items-center gap-1 text-amber-500/60">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                {{ __('app.Expiration') }} {{ $share->expires_at->diffForHumans() }}
-            </div>
             @endif
+
+            <div class="border-t border-line bg-surface-2/50 p-6 sm:px-10">
+                <button type="button" class="btn btn-primary btn-lg w-full"
+                        @click.prevent="$dispatch('start-mega-download', { url: @js(route('share.download', $share->token)), filename: @js($file->name.'.'.$extension) })">
+                    <i class="ri-download-2-line"></i>{{ __('app.Télécharger') }}
+                </button>
+                <div class="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-xs text-ink-3">
+                    @if ($share->expires_at)
+                        <span><i class="ri-time-line"></i> {{ __('app.Expiration') }} {{ $share->expires_at->diffForHumans() }}</span>
+                    @endif
+                    @if ($share->max_downloads)
+                        <span><i class="ri-download-2-line"></i> {{ max(0, $share->max_downloads - $share->download_count) }} {{ __('app.téléchargement(s) restant(s)') }}</span>
+                    @endif
+                    <span><i class="ri-refresh-line"></i> {{ __('app.Reprise des téléchargements interrompus') }}</span>
+                </div>
+            </div>
         </div>
     </div>
 </x-layouts.guest>

@@ -57,7 +57,7 @@ class Settings extends Component
     public function mount()
     {
         $this->app_name = SystemSetting::get('app_name', config('app.name'));
-        $this->primary_color = SystemSetting::get('primary_color', '#6366f1');
+        $this->primary_color = SystemSetting::get('primary_color', '#c5f82a');
 
         $logoPath = SystemSetting::get('app_logo');
         if ($logoPath) {

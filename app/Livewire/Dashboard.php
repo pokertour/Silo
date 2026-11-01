@@ -96,10 +96,13 @@ class Dashboard extends Component
             $query->where('group_id', $this->filter);
         }
 
-        $isoFiles = $query->latest()->get();
+        $isoFiles = $query->latest()->take(6)->get();
+
+        $groups = auth()->user()->hasRole('admin') ? Group::orderBy('name')->get() : auth()->user()->groups;
 
         return view('livewire.dashboard', [
             'isoFiles' => $isoFiles,
+            'groups' => $groups,
         ]);
     }
 }

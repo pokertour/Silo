@@ -95,7 +95,7 @@ class EditIsoModal extends ModalComponent
 
     public static function modalMaxWidth(): string
     {
-        return 'lg';
+        return 'xl';
     }
 
     public function render()

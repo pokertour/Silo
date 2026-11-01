@@ -129,12 +129,57 @@ await capture('detail', async () => {
     await shoot(page, 'share-modal');
 });
 
+await capture('command-palette', async () => {
+    await page.goto(`${BASE_URL}/dashboard`);
+    await settle(page);
+    await page.keyboard.press('Control+k');
+    await page.keyboard.type('ubu');
+    await page.waitForTimeout(500);
+    await shoot(page, 'command-palette');
+    await page.keyboard.press('Escape');
+});
+
+await capture('notifications', async () => {
+    await page.goto(`${BASE_URL}/dashboard`);
+    await settle(page);
+    await page.locator('aside button[aria-label="Notifications"]').first().click();
+    await page.waitForTimeout(700);
+    await shoot(page, 'notifications');
+});
+
+await capture('confirm-dialog', async () => {
+    await page.goto(`${BASE_URL}/isos`);
+    await settle(page);
+    await page.locator('label:has(input[type="checkbox"][wire\\:model\\.live="selected"])').first().click();
+    await page.waitForTimeout(800);
+    await page.getByRole('button', { name: /^delete$/i }).last().click();
+    await page.waitForTimeout(600);
+    await shoot(page, 'confirm-dialog');
+});
+
+await capture('dashboard-light', async () => {
+    await page.evaluate(() => localStorage.setItem('silo-theme', 'light'));
+    await page.goto(`${BASE_URL}/dashboard`);
+    await settle(page);
+    await shoot(page, 'dashboard-light');
+    await page.goto(`${BASE_URL}/isos`);
+    await settle(page);
+    await shoot(page, 'library-light');
+    await page.evaluate(() => localStorage.setItem('silo-theme', 'dark'));
+});
+
 // --- Mobile -----------------------------------------------------------------
 
 const mobile = await newPage(MOBILE);
 await capture('mobile', async () => {
     await login(mobile);
     await shoot(mobile, 'mobile-dashboard');
+    await mobile.goto(`${BASE_URL}/isos`);
+    await settle(mobile);
+    await shoot(mobile, 'mobile-library');
+    await mobile.locator('header button[aria-label="Menu"]').first().click();
+    await mobile.waitForTimeout(700);
+    await shoot(mobile, 'mobile-menu');
 });
 
 await browser.close();

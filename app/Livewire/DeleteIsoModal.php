@@ -52,7 +52,7 @@ class DeleteIsoModal extends ModalComponent
 
     public static function modalMaxWidth(): string
     {
-        return 'sm';
+        return 'md';
     }
 
     public function render()
