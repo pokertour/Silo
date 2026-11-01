@@ -73,6 +73,8 @@ Silo est une application web pour les équipes qui ont besoin d'un endroit uniqu
 | **Palette de commandes** — <kbd>⌘K</kbd> / <kbd>/</kbd> pour aller partout | **Administration** — stockages, répartition par OS, activité |
 | ![Thème sombre](docs/screenshots/dashboard-dark.jpg) | ![Dialogue de confirmation](docs/screenshots/confirm-dialog.jpg) |
 | **Thème sombre** — suit le réglage du système | **Aucune popup du navigateur** — dialogues maison partout |
+| ![Authentification unique](docs/screenshots/login.jpg) | ![Réglages d'authentification](docs/screenshots/admin-auth.jpg) |
+| **Authentification unique** — OpenID Connect, OAuth 2 ou LDAP | **Authentification** — fournisseur d'identité et annuaire |
 
 <p align="center"><img src="docs/screenshots/mobile.jpg" alt="Silo sur mobile" width="90%"><br><sub>Une vraie interface mobile : barre d'onglets, menu latéral et dialogues en bas d'écran.</sub></p>
 

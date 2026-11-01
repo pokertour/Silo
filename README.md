@@ -73,6 +73,8 @@ Silo is a web application for teams that need one place to store and distribute 
 | **Command palette** — <kbd>⌘K</kbd> / <kbd>/</kbd> to jump anywhere | **Administration** — storage, OS distribution, activity |
 | ![Dark theme](docs/screenshots/dashboard-dark.jpg) | ![Confirmation dialog](docs/screenshots/confirm-dialog.jpg) |
 | **Dark theme** — follows your system | **No browser popups** — custom dialogs everywhere |
+| ![Single sign-on](docs/screenshots/login.jpg) | ![Authentication settings](docs/screenshots/admin-auth.jpg) |
+| **Single sign-on** — OpenID Connect, OAuth 2 or LDAP | **Authentication** — IdP and directory settings |
 
 <p align="center"><img src="docs/screenshots/mobile.jpg" alt="Silo on mobile" width="90%"><br><sub>A real mobile layout: tab bar, slide-in menu and bottom sheets.</sub></p>
 
