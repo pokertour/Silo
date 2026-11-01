@@ -38,14 +38,15 @@ function importAttributes(User $user, string $name = 'Debian 13'): array
 test('le lien du tableau de bord ouvre l\'onglet URL', function () {
     $user = User::factory()->create();
 
-    Livewire::withQueryParams(['source' => 'url'])
-        ->actingAs($user)
-        ->test(Upload::class)
-        ->assertSet('initialSource', 'url');
+    $this->actingAs($user)
+        ->get(route('upload', ['source' => 'url']))
+        ->assertOk()
+        ->assertSee('&quot;initialSource&quot;:&quot;url&quot;', false);
 
-    Livewire::actingAs($user)
-        ->test(Upload::class)
-        ->assertSet('initialSource', 'file');
+    $this->actingAs($user)
+        ->get(route('upload'))
+        ->assertOk()
+        ->assertSee('&quot;initialSource&quot;:&quot;file&quot;', false);
 });
 
 test('un import depuis le formulaire crée un suivi en attente', function () {
@@ -109,7 +110,7 @@ test('une URL interne marque l\'import en échec', function () {
 
     $job = new ImportIsoFromUrl('http://127.0.0.1/secret.iso', importAttributes($user));
 
-    expect(fn () => $job->handle())->toThrow(Throwable::class);
+    expect(fn () => $job->handle())->toThrow(RuntimeException::class, 'URL refusée');
 
     $import = IsoImport::sole();
     expect($import->status)->toBe(IsoImport::FAILED)
@@ -181,7 +182,7 @@ test('un import en échec peut être relancé puis masqué', function () {
         ->and($import->fresh()->error)->toBeNull();
     Queue::assertPushed(ImportIsoFromUrl::class);
 
-    $import->update(['status' => IsoImport::FAILED, 'finished_at' => now()]);
+    $import->fresh()->update(['status' => IsoImport::FAILED, 'finished_at' => now()]);
     Livewire::actingAs($user)->test(ImportsPanel::class)->call('dismiss', $import->id)->assertDontSee('Relance');
 
     expect($import->fresh()->dismissed_at)->not->toBeNull();
