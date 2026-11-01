@@ -81,7 +81,7 @@
                 <div class="flex flex-1 flex-wrap items-center gap-2 sm:justify-end">
                     <div class="w-full sm:w-44"><x-custom-select wire:model="bulkGroupId" :options="$bulkGroupOptions" icon="ri-folder-transfer-line" /></div>
                     <button type="button" wire:click="assignGroupSelected" class="btn btn-secondary flex-1 sm:flex-none"><i class="ri-folder-transfer-line"></i>{{ __('app.Déplacer') }}</button>
-                    <button type="button" class="btn btn-danger flex-1 sm:flex-none"
+                    <button type="button" data-bulk-delete class="btn btn-danger flex-1 sm:flex-none"
                             @click="$store.dialog.confirm({
                                 title: @js(__('app.Supprimer la sélection ?')),
                                 message: @js(__('app.Supprimer définitivement les fichiers sélectionnés ?')),

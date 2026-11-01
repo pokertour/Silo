@@ -156,9 +156,8 @@ await capture('confirm-dialog', async () => {
     await page.waitForTimeout(800);
     await boxes.nth(2).check({ force: true });
     await page.waitForTimeout(1200);
-    console.log('selected =', await page.evaluate(() => JSON.stringify(window.Livewire.all().map((c) => c.$wire.selected).filter(Boolean))));
     await shoot(page, 'library-selected');
-    await page.getByRole('button', { name: /^delete$/i }).last().click();
+    await page.locator('[data-bulk-delete]').click();
     await page.waitForTimeout(600);
     await shoot(page, 'confirm-dialog');
 });
