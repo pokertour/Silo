@@ -1,8 +1,10 @@
 #!/bin/sh
 set -e
 
+# Redis persiste dans le volume storage (sessions, file d'attente)
+mkdir -p storage/redis
 echo "Starting temporary Redis server for boot tasks..."
-redis-server --daemonize yes
+redis-server --daemonize yes --dir /app/storage/redis --appendonly yes --save 60 1
 sleep 1
 
 # Ensure framework directories exist in case a host volume mount hides them
