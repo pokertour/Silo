@@ -3,6 +3,7 @@
         'general' => ['icon' => 'ri-palette-line', 'label' => __('app.Général')],
         'storage' => ['icon' => 'ri-hard-drive-3-line', 'label' => __('app.Stockages Disponibles')],
         'mail' => ['icon' => 'ri-mail-settings-line', 'label' => __('app.E-mail')],
+        'auth' => ['icon' => 'ri-shield-user-line', 'label' => __('app.Authentification')],
         'about' => ['icon' => 'ri-information-line', 'label' => __('app.À propos')],
     ];
     $swatches = ['#0071e3', '#5856d6', '#af52de', '#ff2d55', '#ff3b30', '#ff9500', '#34c759', '#30b0c7', '#8e8e93'];
@@ -291,6 +292,240 @@
                     </div>
                     <p class="mt-3 text-xs text-ink-3">{{ __('app.Le test utilise la configuration enregistrée et est envoyé à :email.', ['email' => auth()->user()->email]) }}</p>
                 </form>
+            @endif
+
+            @if ($activeTab === 'auth')
+                <div class="space-y-6">
+                    {{-- SSO OpenID Connect / OAuth 2 --}}
+                    <form wire:submit="saveOidc" class="card p-6" x-data="{ enabled: $wire.entangle('oidc.enabled'), advanced: @js(($oidc['issuer'] ?? '') === '' && ($oidc['authorize_url'] ?? '') !== '') }">
+                        <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
+                            <div>
+                                <h2 class="panel-title"><i class="ri-shield-keyhole-line text-accent-ink"></i>{{ __('app.Authentification unique (SSO)') }}</h2>
+                                <p class="mt-1 max-w-xl text-sm text-ink-3">{{ __('app.OpenID Connect ou OAuth 2 : Keycloak, Authentik, Microsoft Entra ID, Google, Okta, GitLab…') }}</p>
+                            </div>
+                            @if (\App\Support\OidcSettings::enabled())
+                                <span class="badge badge-ok"><i class="ri-checkbox-circle-fill"></i>{{ __('app.Actif') }}</span>
+                            @else
+                                <span class="badge">{{ __('app.Inactif') }}</span>
+                            @endif
+                        </div>
+
+                        <label class="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-line bg-bg-2 px-4 py-3.5">
+                            <span>
+                                <span class="block text-sm font-medium text-ink">{{ __('app.Activer la connexion SSO') }}</span>
+                                <span class="block text-xs text-ink-3">{{ __('app.Ajoute un bouton sur la page de connexion. La connexion par mot de passe reste disponible.') }}</span>
+                            </span>
+                            <input type="checkbox" x-model="enabled" class="size-5 shrink-0 accent-[var(--accent)]">
+                        </label>
+
+                        <div class="mt-5 rounded-2xl border border-line px-4 py-3.5" x-data="copyable(@js(\App\Auth\Oidc\OidcClient::redirectUri()))">
+                            <span class="label mb-1">{{ __('app.URL de redirection à déclarer chez le fournisseur') }}</span>
+                            <div class="flex items-center gap-2">
+                                <code class="min-w-0 flex-1 truncate font-code text-[13px] text-ink">{{ \App\Auth\Oidc\OidcClient::redirectUri() }}</code>
+                                <button type="button" @click="copy()" class="icon-btn" :title="copied ? @js(__('app.Copié !')) : @js(__('app.Copier'))"><i :class="copied ? 'ri-check-line text-ok' : 'ri-file-copy-line'"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 space-y-5">
+                            <div class="grid gap-4 sm:grid-cols-[minmax(0,1fr)_220px]">
+                                <div>
+                                    <label class="label" for="oidc-issuer">{{ __('app.URL de l\'émetteur (issuer)') }}</label>
+                                    <input wire:model="oidc.issuer" id="oidc-issuer" type="url" class="input input-mono" placeholder="https://auth.example.com/realms/main">
+                                    <p class="mt-1.5 text-xs text-ink-3">{{ __('app.Les points de terminaison sont découverts via /.well-known/openid-configuration.') }}</p>
+                                    @error('oidc.issuer') <p class="field-error">{{ $message }}</p> @enderror
+                                </div>
+                                <div>
+                                    <label class="label" for="oidc-label">{{ __('app.Libellé du bouton') }}</label>
+                                    <input wire:model="oidc.label" id="oidc-label" type="text" class="input" placeholder="Keycloak">
+                                    @error('oidc.label') <p class="field-error">{{ $message }}</p> @enderror
+                                </div>
+                            </div>
+                            <div class="grid gap-4 sm:grid-cols-2">
+                                <div>
+                                    <label class="label" for="oidc-client-id">Client ID</label>
+                                    <input wire:model="oidc.client_id" id="oidc-client-id" type="text" class="input input-mono" autocomplete="off">
+                                    @error('oidc.client_id') <p class="field-error">{{ $message }}</p> @enderror
+                                </div>
+                                <div>
+                                    <label class="label" for="oidc-client-secret">Client secret</label>
+                                    <input wire:model="oidc_client_secret" id="oidc-client-secret" type="password" class="input" autocomplete="new-password" placeholder="{{ $oidc_client_secret_set ? __('app.Inchangé') : '' }}">
+                                    @error('oidc_client_secret') <p class="field-error">{{ $message }}</p> @enderror
+                                </div>
+                            </div>
+                            <div class="grid gap-4 sm:grid-cols-2">
+                                <div>
+                                    <label class="label" for="oidc-scopes">Scopes</label>
+                                    <input wire:model="oidc.scopes" id="oidc-scopes" type="text" class="input input-mono">
+                                    @error('oidc.scopes') <p class="field-error">{{ $message }}</p> @enderror
+                                </div>
+                                <div>
+                                    <label class="label" for="oidc-domains">{{ __('app.Domaines autorisés') }} <span class="normal-case tracking-normal">({{ __('app.optionnel') }})</span></label>
+                                    <input wire:model="oidc.allowed_domains" id="oidc-domains" type="text" class="input input-mono" placeholder="example.com, example.org">
+                                    @error('oidc.allowed_domains') <p class="field-error">{{ $message }}</p> @enderror
+                                </div>
+                            </div>
+
+                            <div class="grid gap-4 border-t border-line pt-5 sm:grid-cols-2">
+                                <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-line px-3.5 py-3 sm:col-span-2">
+                                    <input wire:model="oidc.auto_create" type="checkbox" class="mt-0.5 size-4 accent-[var(--accent)]">
+                                    <span>
+                                        <span class="block text-sm text-ink">{{ __('app.Créer automatiquement les comptes') }}</span>
+                                        <span class="block text-xs text-ink-3">{{ __('app.Sinon, seuls les utilisateurs existants (même adresse e-mail) peuvent se connecter.') }}</span>
+                                    </span>
+                                </label>
+                                <div>
+                                    <label class="label" for="oidc-admin-claim">{{ __('app.Claim des groupes') }} <span class="normal-case tracking-normal">({{ __('app.optionnel') }})</span></label>
+                                    <input wire:model="oidc.admin_claim" id="oidc-admin-claim" type="text" class="input input-mono" placeholder="groups">
+                                </div>
+                                <div>
+                                    <label class="label" for="oidc-admin-value">{{ __('app.Valeur donnant le rôle admin') }}</label>
+                                    <input wire:model="oidc.admin_value" id="oidc-admin-value" type="text" class="input input-mono" placeholder="silo-admins">
+                                </div>
+                            </div>
+
+                            <div class="border-t border-line pt-4">
+                                <button type="button" @click="advanced = !advanced" class="flex items-center gap-1.5 text-sm font-medium text-accent-ink">
+                                    <i class="ri-arrow-right-s-line transition" :class="advanced && 'rotate-90'"></i>{{ __('app.OAuth 2 sans découverte et correspondance des claims') }}
+                                </button>
+                                <div x-show="advanced" x-collapse class="mt-4 space-y-4">
+                                    <p class="text-xs text-ink-3">{{ __('app.Renseignés, ces points de terminaison remplacent ceux de la découverte (ex. GitHub : https://github.com/login/oauth/authorize, https://github.com/login/oauth/access_token, https://api.github.com/user).') }}</p>
+                                    @foreach (['authorize_url' => 'Authorization URL', 'token_url' => 'Token URL', 'userinfo_url' => 'Userinfo URL'] as $field => $label)
+                                        <div>
+                                            <label class="label" for="oidc-{{ $field }}">{{ $label }}</label>
+                                            <input wire:model="oidc.{{ $field }}" id="oidc-{{ $field }}" type="url" class="input input-mono">
+                                            @error('oidc.'.$field) <p class="field-error">{{ $message }}</p> @enderror
+                                        </div>
+                                    @endforeach
+                                    <div class="grid gap-4 sm:grid-cols-2">
+                                        <div>
+                                            <label class="label" for="oidc-email-claim">{{ __('app.Claim e-mail') }}</label>
+                                            <input wire:model="oidc.email_claim" id="oidc-email-claim" type="text" class="input input-mono">
+                                        </div>
+                                        <div>
+                                            <label class="label" for="oidc-name-claim">{{ __('app.Claim nom') }}</label>
+                                            <input wire:model="oidc.name_claim" id="oidc-name-claim" type="text" class="input input-mono">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 flex flex-col-reverse gap-2 border-t border-line pt-5 sm:flex-row sm:items-center sm:justify-between">
+                            <button type="button" wire:click="testOidc" wire:loading.attr="disabled" wire:target="testOidc" class="btn btn-secondary">
+                                <i class="ri-pulse-line" wire:loading.remove wire:target="testOidc"></i><i class="ri-loader-4-line animate-spin" wire:loading wire:target="testOidc"></i>{{ __('app.Tester la découverte') }}
+                            </button>
+                            <button type="submit" class="btn btn-primary"><i class="ri-save-3-line"></i>{{ __('app.Enregistrer') }}</button>
+                        </div>
+                    </form>
+
+                    {{-- LDAP / Active Directory --}}
+                    <form wire:submit="saveLdap" class="card p-6" x-data="{ enabled: $wire.entangle('ldap.enabled') }">
+                        <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
+                            <div>
+                                <h2 class="panel-title"><i class="ri-organization-chart text-accent-ink"></i>{{ __('app.Annuaire LDAP') }}</h2>
+                                <p class="mt-1 max-w-xl text-sm text-ink-3">{{ __('app.OpenLDAP, Active Directory, FreeIPA… Les utilisateurs se connectent avec leur identifiant et leur mot de passe de l\'annuaire.') }}</p>
+                            </div>
+                            @if (\App\Support\LdapSettings::enabled())
+                                <span class="badge badge-ok"><i class="ri-checkbox-circle-fill"></i>{{ __('app.Actif') }}</span>
+                            @else
+                                <span class="badge">{{ __('app.Inactif') }}</span>
+                            @endif
+                        </div>
+
+                        <label class="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-line bg-bg-2 px-4 py-3.5">
+                            <span>
+                                <span class="block text-sm font-medium text-ink">{{ __('app.Activer la connexion LDAP') }}</span>
+                                <span class="block text-xs text-ink-3">{{ __('app.Les comptes locaux continuent de fonctionner.') }}</span>
+                            </span>
+                            <input type="checkbox" x-model="enabled" class="size-5 shrink-0 accent-[var(--accent)]">
+                        </label>
+
+                        <div class="mt-6 space-y-5">
+                            <div class="grid gap-4 sm:grid-cols-[minmax(0,1fr)_110px]">
+                                <div>
+                                    <label class="label" for="ldap-host">{{ __('app.Serveur') }}</label>
+                                    <input wire:model="ldap.host" id="ldap-host" type="text" class="input input-mono" placeholder="ldap.example.com">
+                                    @error('ldap.host') <p class="field-error">{{ $message }}</p> @enderror
+                                </div>
+                                <div>
+                                    <label class="label" for="ldap-port">Port</label>
+                                    <input wire:model="ldap.port" id="ldap-port" type="number" min="1" max="65535" class="input input-mono">
+                                    @error('ldap.port') <p class="field-error">{{ $message }}</p> @enderror
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-4">
+                                <div class="segmented" x-data="{ enc: $wire.entangle('ldap.encryption') }">
+                                    <button type="button" class="chip" :class="enc === 'starttls' && 'is-active'" @click="enc = 'starttls'; $wire.set('ldap.port', 389)">STARTTLS</button>
+                                    <button type="button" class="chip" :class="enc === 'ssl' && 'is-active'" @click="enc = 'ssl'; $wire.set('ldap.port', 636)">LDAPS</button>
+                                    <button type="button" class="chip" :class="enc === 'none' && 'is-active'" @click="enc = 'none'; $wire.set('ldap.port', 389)">{{ __('app.Aucune') }}</button>
+                                </div>
+                                <label class="flex items-center gap-2 text-sm text-ink-2">
+                                    <input wire:model="ldap.verify_certificate" type="checkbox" class="size-4 accent-[var(--accent)]">{{ __('app.Vérifier le certificat') }}
+                                </label>
+                            </div>
+                            <div>
+                                <label class="label" for="ldap-base-dn">{{ __('app.Base de recherche (Base DN)') }}</label>
+                                <input wire:model="ldap.base_dn" id="ldap-base-dn" type="text" class="input input-mono" placeholder="ou=people,dc=example,dc=com">
+                                @error('ldap.base_dn') <p class="field-error">{{ $message }}</p> @enderror
+                            </div>
+                            <div class="grid gap-4 sm:grid-cols-2">
+                                <div>
+                                    <label class="label" for="ldap-bind-dn">{{ __('app.Compte de service (Bind DN)') }}</label>
+                                    <input wire:model="ldap.bind_dn" id="ldap-bind-dn" type="text" class="input input-mono" placeholder="cn=silo,ou=services,dc=example,dc=com" autocomplete="off">
+                                    @error('ldap.bind_dn') <p class="field-error">{{ $message }}</p> @enderror
+                                </div>
+                                <div>
+                                    <label class="label" for="ldap-bind-password">{{ __('app.Password') }}</label>
+                                    <input wire:model="ldap_bind_password" id="ldap-bind-password" type="password" class="input" autocomplete="new-password" placeholder="{{ $ldap_bind_password_set ? __('app.Inchangé') : '' }}">
+                                    @if ($ldap_bind_password_set)
+                                        <label class="mt-2 flex items-center gap-2 text-xs text-ink-3">
+                                            <input wire:model="ldap_clear_bind_password" type="checkbox" class="size-3.5 accent-[var(--accent)]">{{ __('app.Supprimer le mot de passe enregistré') }}
+                                        </label>
+                                    @endif
+                                </div>
+                            </div>
+                            <div>
+                                <label class="label" for="ldap-filter">{{ __('app.Filtre utilisateur') }}</label>
+                                <input wire:model="ldap.user_filter" id="ldap-filter" type="text" class="input input-mono text-[13px]">
+                                <p class="mt-1.5 text-xs text-ink-3">{{ __('app.{login} est remplacé par l\'identifiant saisi (échappé).') }}</p>
+                                @error('ldap.user_filter') <p class="field-error">{{ $message }}</p> @enderror
+                            </div>
+                            <div class="grid gap-4 sm:grid-cols-2">
+                                <div>
+                                    <label class="label" for="ldap-email-attr">{{ __('app.Attribut e-mail') }}</label>
+                                    <input wire:model="ldap.email_attribute" id="ldap-email-attr" type="text" class="input input-mono">
+                                    @error('ldap.email_attribute') <p class="field-error">{{ $message }}</p> @enderror
+                                </div>
+                                <div>
+                                    <label class="label" for="ldap-name-attr">{{ __('app.Attribut nom') }}</label>
+                                    <input wire:model="ldap.name_attribute" id="ldap-name-attr" type="text" class="input input-mono">
+                                    @error('ldap.name_attribute') <p class="field-error">{{ $message }}</p> @enderror
+                                </div>
+                            </div>
+                            <div class="grid gap-4 border-t border-line pt-5">
+                                <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-line px-3.5 py-3">
+                                    <input wire:model="ldap.auto_create" type="checkbox" class="mt-0.5 size-4 accent-[var(--accent)]">
+                                    <span>
+                                        <span class="block text-sm text-ink">{{ __('app.Créer automatiquement les comptes') }}</span>
+                                        <span class="block text-xs text-ink-3">{{ __('app.Sinon, seuls les utilisateurs existants (même adresse e-mail) peuvent se connecter.') }}</span>
+                                    </span>
+                                </label>
+                                <div>
+                                    <label class="label" for="ldap-admin-group">{{ __('app.Groupe des administrateurs (DN)') }} <span class="normal-case tracking-normal">({{ __('app.optionnel') }})</span></label>
+                                    <input wire:model="ldap.admin_group" id="ldap-admin-group" type="text" class="input input-mono" placeholder="cn=silo-admins,ou=groups,dc=example,dc=com">
+                                    <p class="mt-1.5 text-xs text-ink-3">{{ __('app.Lu dans l\'attribut memberOf de l\'utilisateur.') }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 flex flex-col-reverse gap-2 border-t border-line pt-5 sm:flex-row sm:items-center sm:justify-between">
+                            <button type="button" wire:click="testLdap" wire:loading.attr="disabled" wire:target="testLdap" class="btn btn-secondary">
+                                <i class="ri-pulse-line" wire:loading.remove wire:target="testLdap"></i><i class="ri-loader-4-line animate-spin" wire:loading wire:target="testLdap"></i>{{ __('app.Tester la connexion') }}
+                            </button>
+                            <button type="submit" class="btn btn-primary"><i class="ri-save-3-line"></i>{{ __('app.Enregistrer') }}</button>
+                        </div>
+                    </form>
+                </div>
             @endif
 
             @if ($activeTab === 'about' && $system)
