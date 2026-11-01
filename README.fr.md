@@ -31,7 +31,7 @@ Silo est une application web pour les équipes qui ont besoin d'un endroit uniqu
 
 ### 📦 Gestion des fichiers
 - **Upload par morceaux avec reprise** — glissez-déposez des fichiers de toute taille ; un upload interrompu reprend là où il s'était arrêté.
-- **Import depuis une URL** — le serveur télécharge l'image en arrière-plan et vous prévient à la fin.
+- **Import depuis une URL** — le serveur télécharge l'image en arrière-plan ; suivez la progression en direct (débit, temps restant), annulez ou relancez.
 - **Intégrité SHA-256** — empreintes calculées en arrière-plan, comparées à la valeur attendue que vous fournissez, et recherchables (collez un hash pour retrouver le fichier).
 - **Détection des doublons** — les fichiers identiques sont signalés automatiquement.
 - **Métadonnées riches** — version, architecture, type d'OS, description et tags colorés, avec recherche, filtres, tri et actions groupées.
@@ -118,7 +118,7 @@ Le seeder affiche un mot de passe généré aléatoirement (ou utilise `ADMIN_EM
 
 ## ⚙️ Configuration
 
-Silo se configure par variables d'environnement. Les plus utiles :
+L'image Docker embarque des valeurs par défaut de production (`APP_NAME=Silo`, `APP_ENV=production`, `LOG_CHANNEL=daily`, cache/sessions/files d'attente Redis, hôte MariaDB `db`…) : votre `.env` ne contient que les secrets ci-dessus. Toute variable reste surchargeable. Les plus utiles :
 
 | Variable | Défaut | Description |
 |---|---|---|
@@ -126,7 +126,7 @@ Silo se configure par variables d'environnement. Les plus utiles :
 | `APP_LOCALE` | `en` | Langue par défaut si celle du navigateur n'est pas prise en charge. |
 | `TRUSTED_PROXIES` | réseaux privés | Reverse proxies autorisés à envoyer les en-têtes `X-Forwarded-*`. N'utilisez `*` que si Silo n'est joignable **que** via votre proxy. |
 | `SESSION_SECURE_COOKIE` | `true` | À laisser activé en HTTPS. |
-| `MAIL_MAILER`, `MAIL_HOST`, … | `log` | Paramètres SMTP, nécessaires pour envoyer les invitations. |
+| `MAIL_MAILER`, `MAIL_HOST`, … | `log` | Paramètres SMTP de repli. Plus simple : configurez le SMTP depuis **Admin → Paramètres → E-mail** (mot de passe chiffré, bouton de test). |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | mot de passe aléatoire | Administrateur initial créé par le seeder. |
 
 Les emplacements de stockage (local, NFS, S3, FTP, SFTP) se gèrent depuis **Admin → Paramètres → Stockage**, pas via l'environnement. Les limites d'upload sont définies dans [`custom.ini`](custom.ini) (50 Go par défaut).

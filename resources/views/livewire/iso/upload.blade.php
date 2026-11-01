@@ -196,7 +196,7 @@
     @script
     <script>
         Alpine.data('resumableUpload', () => ({
-                mode: 'file',
+                mode: $wire.initialSource === 'url' ? 'url' : 'file',
                 uploading: false,
                 completed: !!$wire.tempFilePath,
                 dragging: false,

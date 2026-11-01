@@ -6,7 +6,12 @@ use App\Livewire\Concerns\AuthorizesAdmin;
 use App\Models\IsoFile;
 use App\Models\StorageLocation;
 use App\Models\SystemSetting;
+use App\Support\MailSettings;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Number;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -54,6 +59,27 @@ class Settings extends Component
 
     public $config_endpoint = '';
 
+    // Mail Settings
+    public bool $mail_enabled = false;
+
+    public string $mail_host = '';
+
+    public $mail_port = 587;
+
+    public string $mail_encryption = 'tls';
+
+    public string $mail_username = '';
+
+    public string $mail_password = '';
+
+    public bool $mail_password_set = false;
+
+    public bool $mail_clear_password = false;
+
+    public string $mail_from_address = '';
+
+    public string $mail_from_name = '';
+
     public function mount()
     {
         $this->app_name = SystemSetting::get('app_name', config('app.name'));
@@ -65,6 +91,126 @@ class Settings extends Component
         } else {
             $this->current_logo_url = asset('assets/logo/logo.svg');
         }
+
+        $this->loadMailSettings();
+    }
+
+    private function loadMailSettings(): void
+    {
+        $mail = MailSettings::stored();
+
+        $this->mail_enabled = (bool) $mail['enabled'];
+        $this->mail_host = (string) $mail['host'];
+        $this->mail_port = (int) $mail['port'];
+        $this->mail_encryption = (string) $mail['encryption'];
+        $this->mail_username = (string) $mail['username'];
+        $this->mail_from_address = (string) $mail['from_address'];
+        $this->mail_from_name = (string) $mail['from_name'];
+        $this->mail_password = '';
+        $this->mail_clear_password = false;
+        $this->mail_password_set = MailSettings::hasPassword();
+    }
+
+    public function saveMail()
+    {
+        $required = $this->mail_enabled ? 'required' : 'nullable';
+
+        $this->validate([
+            'mail_host' => [$required, 'string', 'max:255', 'regex:/^[A-Za-z0-9.\-:\[\]]+$/'],
+            'mail_port' => [$required, 'integer', 'min:1', 'max:65535'],
+            'mail_encryption' => ['required', 'in:tls,ssl,none'],
+            'mail_username' => ['nullable', 'string', 'max:255'],
+            'mail_password' => ['nullable', 'string', 'max:255'],
+            'mail_from_address' => [$required, 'nullable', 'email', 'max:255'],
+            'mail_from_name' => ['nullable', 'string', 'max:100'],
+        ]);
+
+        MailSettings::save([
+            'enabled' => $this->mail_enabled,
+            'host' => trim($this->mail_host),
+            'port' => (int) ($this->mail_port ?: 587),
+            'encryption' => $this->mail_encryption,
+            'username' => trim($this->mail_username),
+            'from_address' => trim($this->mail_from_address),
+            'from_name' => trim($this->mail_from_name),
+        ], $this->mail_password, $this->mail_clear_password);
+
+        MailSettings::apply();
+        $this->loadMailSettings();
+
+        $this->dispatch('toastMagic',
+            status: 'success',
+            title: __('app.Succès'),
+            message: __('app.Paramètres e-mail enregistrés.')
+        );
+    }
+
+    public function sendTestMail()
+    {
+        MailSettings::apply();
+
+        $user = auth()->user();
+
+        try {
+            Mail::raw(
+                __('app.Si vous lisez ce message, l\'envoi d\'e-mails depuis :app fonctionne.', ['app' => config('app.name')]),
+                fn ($message) => $message->to($user->email)->subject(__('app.:app — e-mail de test', ['app' => config('app.name')]))
+            );
+
+            $this->dispatch('toastMagic',
+                status: 'success',
+                title: __('app.Succès'),
+                message: __('app.E-mail de test envoyé à :email.', ['email' => e($user->email)])
+            );
+        } catch (\Throwable $e) {
+            report($e);
+
+            $this->dispatch('toastMagic',
+                status: 'error',
+                title: __('app.Erreur'),
+                // Le toast est rendu en HTML : on échappe le message d'erreur
+                message: __('app.Échec de l\'envoi').': '.e(Str::limit($e->getMessage(), 200))
+            );
+        }
+    }
+
+    /** Informations système affichées dans l'onglet « À propos ». */
+    private function systemInfo(): array
+    {
+        $mail = MailSettings::stored();
+        $mailer = config('mail.default');
+
+        $database = DB::connection()->getDriverName();
+        try {
+            $database .= ' '.Str::before((string) DB::connection()->getServerVersion(), '-');
+        } catch (\Throwable) {
+            // version indisponible (ex. driver sans support)
+        }
+
+        $default = StorageLocation::where('is_default', true)->first();
+        $free = null;
+        $root = $default && $default->driver === 'local'
+            ? ($default->configuration['root'] ?? null)
+            : storage_path('app/private');
+        if ($root && is_dir($root)) {
+            $free = @disk_free_space($root) ?: null;
+        }
+
+        return [
+            'version' => config('version.current'),
+            'php' => PHP_VERSION,
+            'laravel' => app()->version(),
+            'database' => trim($database),
+            'cache' => config('cache.default'),
+            'queue' => config('queue.default'),
+            'mail' => $mailer === 'smtp' ? 'SMTP · '.config('mail.mailers.smtp.host') : $mailer,
+            'mail_source' => $mail['enabled'] ? 'admin' : 'env',
+            'environment' => app()->environment(),
+            'files' => IsoFile::count(),
+            'size' => (int) IsoFile::sum('size'),
+            'free' => $free !== null ? Number::fileSize($free, precision: 1) : null,
+            'storages' => StorageLocation::count(),
+        ];
     }
 
     public function deleteLogo()
@@ -242,6 +388,7 @@ class Settings extends Component
     {
         return view('livewire.admin.settings', [
             'locations' => StorageLocation::latest()->get(),
+            'system' => $this->activeTab === 'about' ? $this->systemInfo() : null,
         ]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\IsoImport;
 use App\Models\ShareLink;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -10,7 +11,7 @@ class PruneStaleRecords extends Command
 {
     protected $signature = 'app:prune-stale-records {--days=30 : Ancienneté minimale (en jours)}';
 
-    protected $description = 'Supprime les liens de partage expirés et les notifications lues anciennes';
+    protected $description = 'Supprime les liens de partage expirés, les notifications lues et les imports terminés anciens';
 
     public function handle(): int
     {
@@ -25,7 +26,12 @@ class PruneStaleRecords extends Command
             ->where('read_at', '<', $cutoff)
             ->delete();
 
-        $this->info("Purge terminée : {$links} lien(s) de partage, {$notifications} notification(s).");
+        // Imports terminés (réussis, échoués ou annulés) depuis plus de N jours
+        $imports = IsoImport::whereNotIn('status', IsoImport::ACTIVE_STATUSES)
+            ->where('finished_at', '<', $cutoff)
+            ->delete();
+
+        $this->info("Purge terminée : {$links} lien(s) de partage, {$notifications} notification(s), {$imports} import(s).");
 
         return self::SUCCESS;
     }

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Support\MailSettings;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -37,6 +38,13 @@ class AppServiceProvider extends ServiceProvider
         ]);
 
         Password::defaults(fn () => Password::min(10));
+
+        // Paramètres SMTP définis par l'administrateur (sinon : .env)
+        try {
+            MailSettings::apply();
+        } catch (\Throwable) {
+            // Base indisponible (installation, migrations) : configuration du .env
+        }
 
         // Mot de passe des liens de partage : limite par IP et par lien, pour
         // qu'un attaquant ne puisse pas contourner la limite en changeant d'IP.

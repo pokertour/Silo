@@ -114,6 +114,18 @@ await capture('admin-storage', async () => {
     await shoot(page, 'admin-storage');
 });
 
+for (const [name, label] of [['admin-mail', /^\s*Email\s*$/], ['admin-about', /^\s*About\s*$/]]) {
+    await capture(name, async () => {
+        await page.goto(`${BASE_URL}/admin/settings`);
+        await settle(page);
+        // hasText ignore le glyphe de l'icône (contenu ::before), contrairement au nom accessible
+        await page.locator('button.nav-item', { hasText: label }).first().click();
+        await settle(page);
+        await page.waitForTimeout(800);
+        await shoot(page, name);
+    });
+}
+
 await capture('detail', async () => {
     await page.goto(`${BASE_URL}/isos`);
     await settle(page);

@@ -53,8 +53,33 @@ RUN mkdir -p storage/framework/sessions storage/framework/views storage/framewor
 RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
 
 # Environment variables
-ENV APP_ENV="production"
-ENV APP_DEBUG="false"
+# Valeurs par défaut de l'application : le .env n'a besoin que de l'essentiel
+# (APP_KEY, APP_URL, mots de passe de la base). Toute variable passée au
+# conteneur (env_file / environment de docker-compose) reste prioritaire.
+ENV APP_NAME="Silo" \
+    APP_ENV="production" \
+    APP_DEBUG="false" \
+    APP_LOCALE="en" \
+    APP_FALLBACK_LOCALE="en" \
+    LOG_CHANNEL="daily" \
+    LOG_LEVEL="warning" \
+    LOG_DAILY_DAYS="14" \
+    DB_CONNECTION="mysql" \
+    DB_HOST="db" \
+    DB_PORT="3306" \
+    DB_DATABASE="silo" \
+    DB_USERNAME="isouser" \
+    REDIS_CLIENT="phpredis" \
+    REDIS_HOST="127.0.0.1" \
+    REDIS_PORT="6379" \
+    CACHE_STORE="redis" \
+    SESSION_DRIVER="redis" \
+    SESSION_LIFETIME="120" \
+    SESSION_SECURE_COOKIE="true" \
+    QUEUE_CONNECTION="redis" \
+    BROADCAST_CONNECTION="log" \
+    FILESYSTEM_DISK="local" \
+    MAIL_MAILER="log"
 ENV SERVER_NAME=":8080"
 ENV FRANKENPHP_CONFIG="import /app/Caddyfile"
 

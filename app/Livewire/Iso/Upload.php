@@ -6,6 +6,7 @@ use App\Jobs\CalculateIsoChecksum;
 use App\Jobs\ImportIsoFromUrl;
 use App\Models\Group;
 use App\Models\IsoFile;
+use App\Models\IsoImport;
 use App\Models\StorageLocation;
 use App\Models\Tag;
 use Illuminate\Support\Facades\Storage;
@@ -50,8 +51,13 @@ class Upload extends Component
 
     public $storageLocations;
 
+    /** Onglet ouvert à l'arrivée : « file » ou « url » (?source=url). */
+    public string $initialSource = 'file';
+
     public function mount()
     {
+        $this->initialSource = request()->query('source') === 'url' ? 'url' : 'file';
+
         // Limiter aux groupes de l'utilisateur
         if (auth()->user()->hasRole('admin')) {
             $this->groups = Group::all();
@@ -152,7 +158,7 @@ class Upload extends Component
             return;
         }
 
-        ImportIsoFromUrl::dispatch($this->importUrl, [
+        $attributes = [
             'name' => $this->name,
             'version' => $this->version,
             'architecture' => $this->architecture,
@@ -162,12 +168,24 @@ class Upload extends Component
             'disk' => StorageLocation::find($this->storage_id)->name,
             'user_id' => auth()->id(),
             'group_id' => empty($this->group_id) ? null : $this->group_id,
-        ], $this->selectedTags);
+        ];
+        $tags = array_values($this->selectedTags);
+
+        // Suivi visible dans le panneau « Imports en cours »
+        $import = IsoImport::create([
+            'user_id' => auth()->id(),
+            'url' => $this->importUrl,
+            'name' => $this->name,
+            'options' => ['attributes' => $attributes, 'tags' => $tags],
+            'status' => IsoImport::PENDING,
+        ]);
+
+        ImportIsoFromUrl::dispatch($this->importUrl, $attributes, $tags, $import->id);
 
         $this->dispatch('toastMagic',
             status: 'info',
             title: __('app.Import lancé'),
-            message: __('app.Le téléchargement s\'effectue en arrière-plan. Vous serez notifié à la fin.')
+            message: __('app.Suivez sa progression dans « Imports en cours ».')
         );
 
         return $this->redirect('/dashboard', navigate: true);

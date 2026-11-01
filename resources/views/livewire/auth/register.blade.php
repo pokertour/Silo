@@ -1,10 +1,13 @@
 <div class="relative w-full max-w-[460px] animate-rise">
 
     <div class="card p-7 sm:p-9">
-        <x-ui.mark :size="56" class="mb-6" />
-        <p class="eyebrow mb-3">{{ __('app.Invitation') }}</p>
+        <x-ui.mark :size="64" class="mx-auto mb-5" />
+        <div class="text-center">
+        <p class="eyebrow mb-2">{{ __('app.Invitation') }}</p>
         <h1 class="font-display text-3xl font-semibold text-ink">{{ __('app.Créer un compte') }}</h1>
         <p class="mt-1.5 text-sm text-ink-2">{{ __('app.Vous avez été invité à rejoindre cet espace.') }}</p>
+
+        </div>
 
         <form wire:submit="register" class="mt-7 space-y-4">
             <div>
