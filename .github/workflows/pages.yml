@@ -114,6 +114,7 @@ jobs:
           tail -n 100 storage/logs/laravel.log || true
 
       - name: Upload screenshots (review)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: screenshots
