@@ -687,4 +687,5 @@ return [
     'environ' => 'about',
     'Échec' => 'Failed',
     'Échec de l\'envoi' => 'Sending failed',
+    'Créé par' => 'Created by',
 ];

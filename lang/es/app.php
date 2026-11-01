@@ -687,4 +687,5 @@ return [
     'environ' => 'aprox.',
     'Échec' => 'Error',
     'Échec de l\'envoi' => 'Error de envío',
+    'Créé par' => 'Creado por',
 ];
