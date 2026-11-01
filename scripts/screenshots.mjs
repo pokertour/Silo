@@ -117,7 +117,8 @@ await capture('admin-storage', async () => {
 await capture('detail', async () => {
     await page.goto(`${BASE_URL}/isos`);
     await settle(page);
-    await page.getByText('Ubuntu Server 24.04.1 LTS').first().click();
+    // Seul l'élément visible (le texte existe aussi dans le menu des notifications, masqué)
+    await page.locator('text="Ubuntu Server 24.04.1 LTS" >> visible=true').first().click();
     await page.waitForURL('**/isos/*');
     await settle(page);
     await shoot(page, 'detail');
