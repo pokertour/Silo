@@ -13,13 +13,15 @@
 ![Livewire](https://img.shields.io/badge/Livewire-4-4E56A6?logo=livewire&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
 
-[Fonctionnalités](#-fonctionnalités) · [Démarrage rapide](#-démarrage-rapide-docker) · [Configuration](#%EF%B8%8F-configuration) · [Sécurité](#-sécurité) · [Développement](#-développement)
+[Fonctionnalités](#-fonctionnalités) · [Captures](#-captures-décran) · [Démarrage rapide](#-démarrage-rapide-docker) · [Configuration](#%EF%B8%8F-configuration) · [Sécurité](#-sécurité) · [Développement](#-développement)
 
-🇬🇧 [English version](README.md)
+🌐 [Site web](https://pokertour.github.io/Silo/) · 🇬🇧 [English version](README.md)
 
 </div>
 
 ---
+
+<p align="center"><img src="docs/screenshots/dashboard.jpg" alt="Tableau de bord de Silo" width="100%"></p>
 
 Silo est une application web pour les équipes qui ont besoin d'un endroit unique où stocker et distribuer leurs images disque : installeurs d'OS, modèles de VM, firmwares, supports de récupération… Elle gère sans difficulté les fichiers de plusieurs gigaoctets (upload par morceaux et reprise, téléchargements reprenables, checksums en arrière-plan), contrôle les accès par groupes et rôles, et permet de partager un fichier avec n'importe qui grâce à des liens protégés par mot de passe et à durée limitée.
 
@@ -51,6 +53,27 @@ Silo est une application web pour les équipes qui ont besoin d'un endroit uniqu
 - **Tableau de bord** : statistiques d'utilisation, capacité des stockages, répartition par OS.
 - **Journal d'audit** de toutes les modifications, gestion des utilisateurs et des groupes, personnalisation (nom, logo, couleur).
 - **4 langues** : anglais, français, espagnol, allemand — détectées depuis le navigateur.
+
+### 🎨 Interface
+- **Thèmes clair et sombre**, couleur d'accent au choix et logo personnalisé.
+- **Palette de commandes** (<kbd>⌘K</kbd>, <kbd>Ctrl K</kbd> ou <kbd>/</kbd>) pour chercher dans la bibliothèque et aller sur n'importe quelle page.
+- **Interface mobile** avec barre d'onglets, menu latéral et dialogues en bas d'écran.
+- Chaque image est représentée par un disque gravé, coloré selon son système.
+
+## 📸 Captures d'écran
+
+| | |
+|---|---|
+| ![Bibliothèque](docs/screenshots/library.jpg) | ![Détail d'une image](docs/screenshots/detail.jpg) |
+| **Bibliothèque** — recherche, filtres, tags et actions groupées | **Détail** — SHA-256 vérifié, liens de partage, historique |
+| ![Upload](docs/screenshots/upload.jpg) | ![Page de partage publique](docs/screenshots/share-public.jpg) |
+| **Upload** — morceaux reprenables ou import depuis une URL | **Page de partage** — ce que voient vos destinataires |
+| ![Palette de commandes](docs/screenshots/command-palette.jpg) | ![Administration](docs/screenshots/admin-stats.jpg) |
+| **Palette de commandes** — <kbd>⌘K</kbd> / <kbd>/</kbd> pour aller partout | **Administration** — stockages, répartition par OS, activité |
+| ![Thème clair](docs/screenshots/dashboard-light.jpg) | ![Dialogue de confirmation](docs/screenshots/confirm-dialog.jpg) |
+| **Thème clair** — ou sombre, au choix | **Aucune popup du navigateur** — dialogues maison partout |
+
+<p align="center"><img src="docs/screenshots/mobile.jpg" alt="Silo sur mobile" width="90%"><br><sub>Une vraie interface mobile : barre d'onglets, menu latéral et dialogues en bas d'écran.</sub></p>
 
 ## 🚀 Démarrage rapide (Docker)
 
@@ -152,6 +175,9 @@ php artisan test
 ```bash
 ./vendor/bin/pint
 ```
+
+> [!NOTE]
+> Les captures et le [site web](https://pokertour.github.io/Silo/) sont générés automatiquement par [`.github/workflows/pages.yml`](.github/workflows/pages.yml) : une instance de démo peuplée par `DemoSeeder` est démarrée, puis chaque écran est capturé avec Playwright (`scripts/screenshots.mjs`).
 
 ### Stack technique
 

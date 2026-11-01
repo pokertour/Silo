@@ -26,7 +26,7 @@
                             :class="active === index ? 'bg-surface-2 text-ink' : 'text-ink-2'">
                         <span class="grid size-8 place-items-center rounded-lg border border-line bg-surface" :class="active === index && 'text-accent-ink'"><i :class="item.icon"></i></span>
                         <span class="flex-1 truncate">
-                            <template x-if="item.search"><span>{{ __('app.Rechercher') }} « <span class="font-semibold text-ink" x-text="item.label"></span> »</span></template>
+                            <template x-if="item.search"><span>{{ __('app.Rechercher') }} “<span class="font-semibold text-ink" x-text="item.label"></span>”</span></template>
                             <template x-if="!item.search"><span x-text="item.label"></span></template>
                         </span>
                         <span class="spec" x-text="item.search ? @js(__('app.Bibliothèque')) : item.group"></span>
