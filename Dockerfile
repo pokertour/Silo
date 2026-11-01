@@ -24,6 +24,7 @@ RUN install-php-extensions \
     opcache \
     pcntl \
     redis \
+    ldap \
     ftp
 
 # Configure PHP for production and unlimited uploads

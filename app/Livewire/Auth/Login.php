@@ -2,7 +2,11 @@
 
 namespace App\Livewire\Auth;
 
+use App\Auth\ExternalAuthException;
+use App\Auth\Ldap\LdapAuthenticator;
 use App\Models\User;
+use App\Support\LdapSettings;
+use App\Support\OidcSettings;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
@@ -43,9 +47,12 @@ class Login extends Component
             return $this->verifyTwoFactor($provider);
         }
 
+        $ldap = LdapSettings::enabled();
+
         $credentials = $this->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
+            // Avec LDAP, l'identifiant peut être un nom d'utilisateur
+            'email' => $ldap ? ['required', 'string', 'max:255'] : ['required', 'email'],
+            'password' => ['required', 'string'],
         ]);
 
         // Anti-bruteforce : 5 tentatives par minute par email + IP
@@ -60,17 +67,31 @@ class Login extends Component
         RateLimiter::hit($throttleKey, 60);
 
         $user = User::where('email', strtolower($credentials['email']))->first();
+        $authenticated = $user && $user->auth_provider === null && Hash::check($credentials['password'], $user->password);
 
-        if ($user && Hash::check($credentials['password'], $user->password)) {
+        // Comptes de l'annuaire, ou identifiants inconnus localement : on interroge LDAP
+        if (! $authenticated && $ldap && (! $user || $user->auth_provider !== 'oidc')) {
+            try {
+                $ldapUser = app(LdapAuthenticator::class)->attempt($credentials['email'], $credentials['password']);
+            } catch (ExternalAuthException $e) {
+                $this->addError('email', $e->getMessage());
+
+                return;
+            }
+
+            if ($ldapUser) {
+                $user = $ldapUser;
+                $authenticated = true;
+            }
+        }
+
+        if ($authenticated) {
             RateLimiter::clear($throttleKey);
 
             // Ne challenger que si la 2FA a été confirmée (config confirm => true),
             // sinon un utilisateur ayant abandonné l'activation serait bloqué.
             if ($user->two_factor_secret && $user->two_factor_confirmed_at) {
-                session()->put(self::PENDING_2FA_KEY, [
-                    'id' => $user->id,
-                    'expires_at' => now()->addSeconds(self::PENDING_2FA_TTL)->getTimestamp(),
-                ]);
+                self::startTwoFactorChallenge($user);
                 $this->requiresTwoFactor = true;
                 $this->password = '';
 
@@ -81,6 +102,15 @@ class Login extends Component
         }
 
         $this->addError('email', __('app.Les identifiants fournis ne correspondent pas à nos enregistrements.'));
+    }
+
+    /** Mémorise l'utilisateur devant encore fournir son code 2FA (aussi utilisé par le SSO). */
+    public static function startTwoFactorChallenge(User $user): void
+    {
+        session()->put(self::PENDING_2FA_KEY, [
+            'id' => $user->id,
+            'expires_at' => now()->addSeconds(self::PENDING_2FA_TTL)->getTimestamp(),
+        ]);
     }
 
     private function verifyTwoFactor(TwoFactorAuthenticationProvider $provider)
@@ -165,6 +195,10 @@ class Login extends Component
 
     public function render()
     {
-        return view('livewire.auth.login');
+        return view('livewire.auth.login', [
+            'ldapEnabled' => LdapSettings::enabled(),
+            'ssoEnabled' => OidcSettings::enabled(),
+            'ssoLabel' => OidcSettings::label(),
+        ]);
     }
 }

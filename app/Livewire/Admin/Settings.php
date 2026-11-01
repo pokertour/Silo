@@ -2,11 +2,17 @@
 
 namespace App\Livewire\Admin;
 
+use App\Auth\Ldap\LdapAuthenticator;
+use App\Auth\Ldap\LdapClient;
+use App\Auth\Oidc\OidcClient;
 use App\Livewire\Concerns\AuthorizesAdmin;
 use App\Models\IsoFile;
 use App\Models\StorageLocation;
 use App\Models\SystemSetting;
+use App\Support\LdapSettings;
 use App\Support\MailSettings;
+use App\Support\OidcSettings;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -80,6 +86,21 @@ class Settings extends Component
 
     public string $mail_from_name = '';
 
+    // Authentification externe
+    public array $ldap = [];
+
+    public string $ldap_bind_password = '';
+
+    public bool $ldap_bind_password_set = false;
+
+    public bool $ldap_clear_bind_password = false;
+
+    public array $oidc = [];
+
+    public string $oidc_client_secret = '';
+
+    public bool $oidc_client_secret_set = false;
+
     public function mount()
     {
         $this->app_name = SystemSetting::get('app_name', config('app.name'));
@@ -93,6 +114,132 @@ class Settings extends Component
         }
 
         $this->loadMailSettings();
+        $this->loadAuthSettings();
+    }
+
+    private function loadAuthSettings(): void
+    {
+        $this->ldap = Arr::except(LdapSettings::stored(), ['bind_password']);
+        $this->ldap_bind_password = '';
+        $this->ldap_clear_bind_password = false;
+        $this->ldap_bind_password_set = LdapSettings::hasSecret('bind_password');
+
+        $this->oidc = Arr::except(OidcSettings::stored(), ['client_secret']);
+        $this->oidc_client_secret = '';
+        $this->oidc_client_secret_set = OidcSettings::hasSecret('client_secret');
+    }
+
+    public function saveLdap()
+    {
+        $required = ($this->ldap['enabled'] ?? false) ? 'required' : 'nullable';
+
+        $this->validate([
+            'ldap.host' => [$required, 'nullable', 'string', 'max:255', 'regex:/^[A-Za-z0-9.\-:\[\]]+$/'],
+            'ldap.port' => ['required', 'integer', 'min:1', 'max:65535'],
+            'ldap.encryption' => ['required', 'in:none,starttls,ssl'],
+            'ldap.base_dn' => [$required, 'nullable', 'string', 'max:500'],
+            'ldap.bind_dn' => ['nullable', 'string', 'max:500'],
+            'ldap_bind_password' => ['nullable', 'string', 'max:500'],
+            'ldap.user_filter' => ['required', 'string', 'max:1000', 'regex:/\{login\}/', 'starts_with:('],
+            'ldap.email_attribute' => ['required', 'string', 'max:64', 'regex:/^[A-Za-z0-9-]+$/'],
+            'ldap.name_attribute' => ['required', 'string', 'max:64', 'regex:/^[A-Za-z0-9-]+$/'],
+            'ldap.admin_group' => ['nullable', 'string', 'max:500'],
+        ], [
+            'ldap.user_filter.regex' => __('app.Le filtre doit contenir {login}.'),
+        ]);
+
+        LdapSettings::save(
+            array_map(fn ($v) => is_string($v) ? trim($v) : $v, $this->ldap),
+            ['bind_password' => $this->ldap_bind_password],
+            $this->ldap_clear_bind_password ? ['bind_password'] : [],
+        );
+        $this->loadAuthSettings();
+
+        $this->toastSaved();
+    }
+
+    public function testLdap(LdapClient $client)
+    {
+        // Teste les valeurs saisies, avec le mot de passe enregistré si le champ est vide
+        $settings = array_merge(LdapAuthenticator::settings(), $this->ldap, array_filter(['bind_password' => $this->ldap_bind_password]));
+
+        try {
+            $count = $client->test($settings);
+
+            $this->dispatch('toastMagic',
+                status: 'success',
+                title: __('app.Connexion réussie !'),
+                message: trans_choice('app.:count utilisateur trouvé|:count utilisateurs trouvés', $count, ['count' => $count >= 50 ? '50+' : $count])
+            );
+        } catch (\Throwable $e) {
+            $this->toastError(__('app.Échec de la connexion'), $e);
+        }
+    }
+
+    public function saveOidc()
+    {
+        $required = ($this->oidc['enabled'] ?? false) ? 'required' : 'nullable';
+        $manual = ($this->oidc['issuer'] ?? '') === '';
+
+        $this->validate([
+            'oidc.label' => ['required', 'string', 'max:40'],
+            'oidc.issuer' => ['nullable', 'url:https,http', 'max:500'],
+            'oidc.client_id' => [$required, 'nullable', 'string', 'max:255'],
+            'oidc_client_secret' => ['nullable', 'string', 'max:1000'],
+            'oidc.scopes' => ['required', 'string', 'max:255'],
+            'oidc.authorize_url' => [$manual ? $required : 'nullable', 'nullable', 'url:https,http', 'max:500'],
+            'oidc.token_url' => [$manual ? $required : 'nullable', 'nullable', 'url:https,http', 'max:500'],
+            'oidc.userinfo_url' => ['nullable', 'url:https,http', 'max:500'],
+            'oidc.email_claim' => ['required', 'string', 'max:64'],
+            'oidc.name_claim' => ['required', 'string', 'max:64'],
+            'oidc.allowed_domains' => ['nullable', 'string', 'max:500'],
+            'oidc.admin_claim' => ['nullable', 'string', 'max:64'],
+            'oidc.admin_value' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        OidcSettings::save(
+            array_map(fn ($v) => is_string($v) ? trim($v) : $v, $this->oidc),
+            ['client_secret' => $this->oidc_client_secret],
+        );
+        $this->loadAuthSettings();
+
+        $this->toastSaved();
+    }
+
+    public function testOidc(OidcClient $client)
+    {
+        try {
+            $endpoints = $client->endpoints(array_merge($client->settings(), $this->oidc), fresh: true);
+
+            $this->dispatch('toastMagic',
+                status: 'success',
+                title: __('app.Connexion réussie !'),
+                message: e(parse_url($endpoints['authorization_endpoint'], PHP_URL_HOST))
+            );
+        } catch (\Throwable $e) {
+            $this->toastError(__('app.Échec de la connexion'), $e);
+        }
+    }
+
+    private function toastSaved(): void
+    {
+        $this->dispatch('toastMagic',
+            status: 'success',
+            title: __('app.Succès'),
+            message: __('app.Paramètres mis à jour.')
+        );
+    }
+
+    private function toastError(string $title, \Throwable $e): void
+    {
+        report($e);
+
+        $this->dispatch('toastMagic',
+            status: 'error',
+            title: __('app.Erreur'),
+            // Le toast est rendu en HTML : on échappe le message d'erreur
+            message: $title.' : '.e(Str::limit($e->getMessage(), 200))
+        );
     }
 
     private function loadMailSettings(): void

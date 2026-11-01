@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Auth\Ldap\LdapClient;
+use App\Auth\Ldap\NativeLdapClient;
 use App\Support\MailSettings;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -20,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(LdapClient::class, NativeLdapClient::class);
     }
 
     /**

@@ -114,7 +114,7 @@ await capture('admin-storage', async () => {
     await shoot(page, 'admin-storage');
 });
 
-for (const [name, label] of [['admin-mail', /^\s*Email\s*$/], ['admin-about', /^\s*About\s*$/]]) {
+for (const [name, label] of [['admin-mail', /^\s*Email\s*$/], ['admin-auth', /^\s*Authentication\s*$/], ['admin-about', /^\s*About\s*$/]]) {
     await capture(name, async () => {
         await page.goto(`${BASE_URL}/admin/settings`);
         await settle(page);
