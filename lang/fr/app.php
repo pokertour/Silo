@@ -632,4 +632,5 @@ return [
     'téléchargement(s) restant(s)' => 'téléchargement(s) restant(s)',
     'visibles par tous' => 'visibles par tous',
     'vous' => 'vous',
+    'Sélectionner' => 'Sélectionner',
 ];

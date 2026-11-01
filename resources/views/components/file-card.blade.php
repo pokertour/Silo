@@ -1,15 +1,13 @@
 {{-- Carte d'image disque (vue grille). --}}
 @props(['file', 'duplicate' => false, 'selectable' => false])
-<article wire:key="file-card-{{ $file->id }}" {{ $attributes->merge(['class' => 'card card-hover group relative flex flex-col p-5']) }}>
-    <div class="flex items-start gap-4">
+<article wire:key="file-card-{{ $file->id }}" {{ $attributes->merge(['class' => 'card card-hover group relative flex flex-col p-5 has-[input:checked]:border-accent-ink has-[input:checked]:bg-accent-soft/40']) }}>
+    @if ($selectable)
+        <input type="checkbox" wire:model.live="selected" value="{{ $file->id }}" aria-label="{{ __('app.Sélectionner') }} {{ $file->name }}"
+               class="absolute top-3 right-3 z-20 size-[18px] cursor-pointer accent-[var(--accent)] transition sm:opacity-0 sm:group-hover:opacity-100 sm:checked:opacity-100 sm:focus-visible:opacity-100">
+    @endif
+    <div @class(["flex items-start gap-4", "pr-6" => $selectable])>
         <div class="relative">
             <x-ui.disc :file="$file" class="transition duration-500 group-hover:rotate-[60deg]" />
-            @if ($selectable)
-                <label class="absolute -top-2 -left-2 z-10 grid size-6 cursor-pointer place-items-center rounded-lg border border-line-strong bg-elevated shadow" onclick="event.stopPropagation()">
-                    <input type="checkbox" wire:model.live="selected" value="{{ $file->id }}" class="peer sr-only">
-                    <i class="ri-check-line hidden text-sm text-accent-ink peer-checked:block"></i>
-                </label>
-            @endif
         </div>
         <div class="min-w-0 flex-1">
             <h3 class="font-display text-[17px] leading-snug font-semibold text-ink">

@@ -151,8 +151,12 @@ await capture('notifications', async () => {
 await capture('confirm-dialog', async () => {
     await page.goto(`${BASE_URL}/isos`);
     await settle(page);
-    await page.locator('label:has(input[type="checkbox"][wire\\:model\\.live="selected"])').first().click();
+    const boxes = page.locator('article input[type="checkbox"]');
+    await boxes.nth(0).check({ force: true });
+    await page.waitForTimeout(800);
+    await boxes.nth(2).check({ force: true });
     await page.waitForTimeout(1200);
+    console.log('selected =', await page.evaluate(() => JSON.stringify(window.Livewire.all().map((c) => c.$wire.selected).filter(Boolean))));
     await shoot(page, 'library-selected');
     await page.getByRole('button', { name: /^delete$/i }).last().click();
     await page.waitForTimeout(600);

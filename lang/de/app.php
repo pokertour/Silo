@@ -638,4 +638,5 @@ return [
     'téléchargement(s) restant(s)' => 'verbleibende Download(s)',
     'visibles par tous' => 'für alle sichtbar',
     'vous' => 'Sie',
+    'Sélectionner' => 'Auswählen',
 ];
