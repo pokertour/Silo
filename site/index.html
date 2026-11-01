@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Silo — The self-hosted vault for disk images</title>
+    <meta name="description" content="Silo is a self-hosted web app to upload, organize and share disk images (ISO, QCOW2, VMDK, IMG…) with groups, expiring share links and two-factor authentication.">
+    <meta name="theme-color" content="#ffffff">
+    <meta property="og:title" content="Silo — The self-hosted vault for disk images">
+    <meta property="og:description" content="Upload, organize and share ISOs, VM disks and large archives. Resumable uploads, SHA-256 integrity, groups, secure share links, 2FA.">
+    <meta property="og:image" content="screenshots/dashboard.jpg">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+    <link rel="preload" href="assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="nav">
+        <div class="container nav-inner">
+            <a class="brand" href="#top"><img src="assets/logo.svg" alt="" width="30" height="30">Silo</a>
+            <nav class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#tour">Tour</a>
+                <a href="#install">Install</a>
+                <a class="btn btn-ghost btn-sm" href="https://github.com/pokertour/Silo">
+                    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                    GitHub
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="top" class="container">
+        <!-- Hero -->
+        <section class="hero">
+            <div>
+                <span class="pill"><span></span>Open source · Self-hosted · Docker</span>
+                <h1>The vault for your <em>disk images</em>.</h1>
+                <p class="lead">Upload, organize and share ISOs, VM disks and large archives from one place. Resumable transfers, SHA-256 integrity, groups and expiring share links — on your own infrastructure.</p>
+                <div class="hero-actions">
+                    <a class="btn btn-primary" href="#install">Get started →</a>
+                    <a class="btn btn-ghost" href="#tour">Take the tour</a>
+                </div>
+                <div class="formats" aria-label="Supported formats">
+                    <code>iso</code><code>img</code><code>qcow2</code><code>vmdk</code><code>vhdx</code><code>vhd</code><code>wim</code><code>esd</code><code>raw</code><code>zip</code><code>7z</code><code>tar</code><code>xz</code>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="disc disc-a" aria-hidden="true"></div>
+                <div class="disc disc-b" aria-hidden="true"></div>
+                <figure class="shot hero-shot" data-lightbox>
+                    <img src="screenshots/dashboard.jpg" alt="Silo dashboard with storage statistics and the latest disk images" width="1440" height="900">
+                </figure>
+            </div>
+        </section>
+
+        <div class="strip">
+            <div><strong>Resumable</strong><span>Chunked transfers</span></div>
+            <div><strong>SHA-256</strong><span>Verified integrity</span></div>
+            <div><strong>5</strong><span>Storage drivers</span></div>
+            <div><strong>4</strong><span>Languages</span></div>
+        </div>
+
+        <!-- Features -->
+        <section id="features" class="section">
+            <div class="section-head">
+                <span class="eyebrow">Features</span>
+                <h2>Everything an image library needs. Nothing it doesn't.</h2>
+                <p>Built for IT teams, labs and homelabs tired of hunting for the right installer on a shared drive.</p>
+            </div>
+            <div class="bento">
+                <article class="tile wide">
+                    <span class="num">01 · Upload</span>
+                    <h3>Multi-gigabyte, resumable</h3>
+                    <p>Drag &amp; drop files of any size. Chunked uploads survive network drops — or let the server import straight from a vendor URL.</p>
+                    <div class="disc" aria-hidden="true"></div>
+                </article>
+                <article class="tile wide">
+                    <span class="num">02 · Integrity</span>
+                    <h3>Checksums you can trust</h3>
+                    <p>SHA-256 is computed in the background, compared with the vendor's hash and searchable. Duplicates are flagged automatically.</p>
+                    <div class="disc" aria-hidden="true"></div>
+                </article>
+                <article class="tile">
+                    <span class="num">03 · Sharing</span>
+                    <h3>Secure share links</h3>
+                    <p>Password, expiration date and download limit. Get notified on every download.</p>
+                </article>
+                <article class="tile">
+                    <span class="num">04 · Access</span>
+                    <h3>Groups &amp; roles</h3>
+                    <p>Public or group-restricted files, invitation-only sign-up and two-factor authentication.</p>
+                </article>
+                <article class="tile">
+                    <span class="num">05 · Storage</span>
+                    <h3>Any backend</h3>
+                    <p>Local, NFS, S3-compatible, FTP and SFTP — credentials encrypted at rest.</p>
+                </article>
+                <article class="tile">
+                    <span class="num">06 · Speed</span>
+                    <h3>Command palette</h3>
+                    <p>Press <code>⌘K</code> or <code>/</code> to jump anywhere or search the library.</p>
+                </article>
+                <article class="tile">
+                    <span class="num">07 · Audit</span>
+                    <h3>Full history</h3>
+                    <p>Every change recorded with its author, plus storage and usage statistics.</p>
+                </article>
+                <article class="tile">
+                    <span class="num">08 · Yours</span>
+                    <h3>Your brand</h3>
+                    <p>Light &amp; dark themes, custom name, logo and accent color. English, French, Spanish, German.</p>
+                </article>
+            </div>
+        </section>
+
+        <!-- Tour -->
+        <section id="tour" class="section">
+            <div class="section-head">
+                <span class="eyebrow">Tour</span>
+                <h2>A closer look.</h2>
+                <p>Real screenshots, generated automatically from a demo instance.</p>
+            </div>
+
+            <div class="showcase">
+                <div class="showcase-text">
+                    <span class="eyebrow">Library</span>
+                    <h3>Find the right image in seconds</h3>
+                    <p>Every image is presented like a product, with its own silver disc and the details that matter.</p>
+                    <ul>
+                        <li>Search by name, OS or paste a SHA-256</li>
+                        <li>Filter by group and tag, sort by date or size</li>
+                        <li>Select several files to move or delete them</li>
+                    </ul>
+                </div>
+                <figure class="shot" data-lightbox><img src="screenshots/library.jpg" alt="Disk image library with search, filters and tags" loading="lazy" width="1440" height="900"></figure>
+            </div>
+
+            <div class="showcase reverse">
+                <div class="showcase-text">
+                    <span class="eyebrow">Details</span>
+                    <h3>Know exactly what you're installing</h3>
+                    <p>Version, architecture, verified fingerprint, share links and the full history of every file — on a single page.</p>
+                </div>
+                <figure class="shot" data-lightbox><img src="screenshots/detail.jpg" alt="Disk image page with verified SHA-256 fingerprint and history" loading="lazy" width="1440" height="900"></figure>
+            </div>
+
+            <div class="showcase">
+                <div class="showcase-text">
+                    <span class="eyebrow">Sharing</span>
+                    <h3>Share outside your team, safely</h3>
+                    <p>Recipients get a clean download page with the checksum and resumable downloads. You stay in control of every link.</p>
+                </div>
+                <div class="duo">
+                    <figure class="shot" data-lightbox><img src="screenshots/share-modal.jpg" alt="Share link options" loading="lazy" width="1440" height="900"></figure>
+                    <figure class="shot" data-lightbox><img src="screenshots/share-public.jpg" alt="Public download page" loading="lazy" width="1440" height="900"></figure>
+                </div>
+            </div>
+
+            <div class="showcase reverse">
+                <div class="showcase-text">
+                    <span class="eyebrow">Upload</span>
+                    <h3>Built for big files</h3>
+                    <p>Upload from the browser with automatic resume, or import from a URL. Paste the expected hash and Silo verifies it for you.</p>
+                </div>
+                <figure class="shot" data-lightbox><img src="screenshots/upload.jpg" alt="Upload page with drop zone and metadata" loading="lazy" width="1440" height="900"></figure>
+            </div>
+
+            <div class="showcase">
+                <div class="showcase-text">
+                    <span class="eyebrow">Keyboard first</span>
+                    <h3>Jump anywhere with ⌘K</h3>
+                    <p>The command palette searches the library and every page. Notifications slide in from the side when imports finish or links get downloaded.</p>
+                </div>
+                <div class="duo">
+                    <figure class="shot" data-lightbox><img src="screenshots/command-palette.jpg" alt="Command palette" loading="lazy" width="1440" height="900"></figure>
+                    <figure class="shot" data-lightbox><img src="screenshots/notifications.jpg" alt="Notifications panel" loading="lazy" width="1440" height="900"></figure>
+                </div>
+            </div>
+
+            <div class="showcase reverse">
+                <div class="showcase-text">
+                    <span class="eyebrow">Administration</span>
+                    <h3>Keep an eye on your infrastructure</h3>
+                    <p>Storage capacity per location, OS distribution, users, groups, invitations and a complete audit log.</p>
+                </div>
+                <figure class="shot" data-lightbox><img src="screenshots/admin-stats.jpg" alt="Administration overview" loading="lazy" width="1440" height="900"></figure>
+            </div>
+
+            <div class="section-head" style="margin-top:1rem">
+                <span class="eyebrow">More screens</span>
+                <h2>Light or dark. It follows your system.</h2>
+            </div>
+            <div class="gallery">
+                <figure class="shot" data-lightbox><img src="screenshots/dashboard-dark.jpg" alt="Dashboard in dark theme" loading="lazy" width="1440" height="900"><figcaption>Dark theme <span>Dashboard</span></figcaption></figure>
+                <figure class="shot" data-lightbox><img src="screenshots/library-dark.jpg" alt="Library in dark theme" loading="lazy" width="1440" height="900"><figcaption>Dark theme <span>Library</span></figcaption></figure>
+                <figure class="shot" data-lightbox><img src="screenshots/confirm-dialog.jpg" alt="Bulk selection and confirmation dialog" loading="lazy" width="1440" height="900"><figcaption>Bulk actions <span>Library</span></figcaption></figure>
+                <figure class="shot" data-lightbox><img src="screenshots/share-links.jpg" alt="Share links list" loading="lazy" width="1440" height="900"><figcaption>Share links <span>Sharing</span></figcaption></figure>
+                <figure class="shot" data-lightbox><img src="screenshots/admin-storage.jpg" alt="Storage locations" loading="lazy" width="1440" height="900"><figcaption>Storage locations <span>Admin</span></figcaption></figure>
+                <figure class="shot" data-lightbox><img src="screenshots/admin-users.jpg" alt="Users" loading="lazy" width="1440" height="900"><figcaption>Members &amp; roles <span>Admin</span></figcaption></figure>
+                <figure class="shot" data-lightbox><img src="screenshots/admin-groups.jpg" alt="Groups" loading="lazy" width="1440" height="900"><figcaption>Groups <span>Admin</span></figcaption></figure>
+                <figure class="shot" data-lightbox><img src="screenshots/admin-invitations.jpg" alt="Invitations" loading="lazy" width="1440" height="900"><figcaption>Invitations <span>Admin</span></figcaption></figure>
+                <figure class="shot" data-lightbox><img src="screenshots/admin-audit.jpg" alt="Audit log" loading="lazy" width="1440" height="900"><figcaption>Audit log <span>Admin</span></figcaption></figure>
+                <figure class="shot" data-lightbox><img src="screenshots/profile.jpg" alt="Profile and two-factor authentication" loading="lazy" width="1440" height="900"><figcaption>Profile &amp; 2FA <span>Account</span></figcaption></figure>
+                <figure class="shot" data-lightbox><img src="screenshots/login.jpg" alt="Sign-in page" loading="lazy" width="1440" height="900"><figcaption>Sign in <span>Public</span></figcaption></figure>
+            </div>
+
+            <div class="mobile-row">
+                <div>
+                    <span class="eyebrow">Mobile</span>
+                    <h3>In your pocket, in the server room</h3>
+                    <p>A real mobile layout with a tab bar and a slide-in menu — check a checksum or grab a share link from your phone.</p>
+                </div>
+                <figure class="phone" data-lightbox><img src="screenshots/mobile-dashboard.jpg" alt="Dashboard on a phone" loading="lazy" width="390" height="844"></figure>
+                <figure class="phone" data-lightbox><img src="screenshots/mobile-library.jpg" alt="Library on a phone" loading="lazy" width="390" height="844"></figure>
+                <figure class="phone" data-lightbox><img src="screenshots/mobile-menu.jpg" alt="Navigation menu on a phone" loading="lazy" width="390" height="844"></figure>
+            </div>
+        </section>
+
+        <!-- Install -->
+        <section id="install" class="section">
+            <div class="install">
+                <div class="section-head">
+                    <span class="eyebrow">Install</span>
+                    <h2>Up and running in three commands.</h2>
+                    <p>One container with everything included: FrankenPHP, Redis, the queue worker and the scheduler. Put it behind your reverse proxy with HTTPS.</p>
+                </div>
+                <ol class="steps">
+                    <li>
+                        <h3>Download the compose file and the environment template</h3>
+                        <pre><code>curl -O https://raw.githubusercontent.com/pokertour/Silo/main/docker-compose.yml
+curl -o .env https://raw.githubusercontent.com/pokertour/Silo/main/.env.example</code><button class="copy" type="button">Copy</button></pre>
+                    </li>
+                    <li>
+                        <h3>Fill in <code>APP_KEY</code>, <code>APP_URL</code> and the database passwords</h3>
+                        <pre><code>echo "APP_KEY=base64:$(openssl rand -base64 32)"
+openssl rand -base64 32   <span class="c"># for DB_PASSWORD and DB_ROOT_PASSWORD</span></code><button class="copy" type="button">Copy</button></pre>
+                    </li>
+                    <li>
+                        <h3>Start Silo and create the administrator</h3>
+                        <pre><code>docker compose up -d
+docker compose exec app php artisan db:seed --force</code><button class="copy" type="button">Copy</button></pre>
+                        <p>Open <code>http://localhost:8080</code> and sign in with the generated password.</p>
+                    </li>
+                </ol>
+            </div>
+
+            <div class="cta">
+                <div>
+                    <h2>Tidy up your images.</h2>
+                    <p>Read the docs, star the project or open an issue on GitHub.</p>
+                </div>
+                <div class="actions">
+                    <a class="btn btn-primary" href="https://github.com/pokertour/Silo#readme">Read the docs</a>
+                    <a class="btn btn-ghost" href="https://github.com/pokertour/Silo">★ Star on GitHub</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-inner">
+            <a class="brand" href="#top"><img src="assets/logo.svg" alt="" width="24" height="24">Silo</a>
+            <p>Open source · Built with Laravel, Livewire &amp; Tailwind CSS · <a href="https://github.com/pokertour/Silo">github.com/pokertour/Silo</a></p>
+        </div>
+    </footer>
+
+    <dialog id="lightbox" aria-label="Screenshot preview">
+        <button class="lightbox-close" type="button" aria-label="Close">×</button>
+        <img alt="">
+    </dialog>
+
+    <script>
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = lightbox.querySelector('img');
+        document.querySelectorAll('[data-lightbox] img').forEach((img) => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightbox.showModal();
+            });
+            // Capture absente : on retire la vignette plutôt qu'afficher une image cassée
+            img.addEventListener('error', () => img.closest('[data-lightbox]').remove());
+        });
+        lightbox.addEventListener('click', () => lightbox.close());
+
+        document.querySelectorAll('pre .copy').forEach((button) => {
+            button.addEventListener('click', async () => {
+                await navigator.clipboard.writeText(button.previousElementSibling.textContent);
+                button.textContent = 'Copied!';
+                setTimeout(() => (button.textContent = 'Copy'), 1500);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,24 +1,7 @@
-<svg width="512" height="512" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-<!-- Forme principale : Un Hexagone robuste (Le Registre / La Structure) -->
-<!-- On utilise des traits très épais (8px) pour la visibilité -->
-<path d="M50 10L85 30V70L50 90L15 70V30L50 10Z"
-stroke="#6366F1"
-stroke-width="8"
-stroke-linejoin="round"/>
-
-<!-- Élément central : Le disque ISO / Le cœur de donnée -->
-
-<!-- Couleur Violette vive pour le contraste -->
-
-<circle cx="50" cy="42" r="12" fill="#A855F7"/>
-
-<!-- L'accent de sécurité / Le "i" d'ISO -->
-
-<!-- Une barre verticale simple qui complète la forme -->
-
-<rect x="46" y="62" width="8" height="15" rx="4" fill="#A855F7"/>
-
-<!-- Petit point lumineux pour le côté "Tech/Serveur" -->
-
-<circle cx="50" cy="42" r="4" fill="white" fill-opacity="0.5"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 64 64" fill="none">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5ac8fa"/><stop offset="1" stop-color="#0071e3"/></linearGradient></defs>
+  <rect width="64" height="64" rx="15" fill="url(#g)"/>
+  <path d="M17 23v19c0 3.9 6.7 7 15 7s15-3.1 15-7V23" stroke="#fff" stroke-width="3.6" stroke-linejoin="round"/>
+  <path d="M17 32.5c0 3.9 6.7 7 15 7s15-3.1 15-7" stroke="#fff" stroke-opacity=".55" stroke-width="3"/>
+  <ellipse cx="32" cy="23" rx="15" ry="6.5" fill="#fff"/>
 </svg>

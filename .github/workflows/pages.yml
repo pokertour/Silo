@@ -1,0 +1,142 @@
+name: GitHub Pages
+
+# Construit le site vitrine (dossier site/) avec des captures d'écran
+# générées automatiquement à partir d'une instance de démonstration.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'site/**'
+      - 'scripts/screenshots.mjs'
+      - 'database/seeders/DemoSeeder.php'
+      - '.github/workflows/pages.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      ADMIN_EMAIL: sarah@silo.demo
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, sqlite3, gd, zip
+          coverage: none
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: |
+          composer install --prefer-dist --no-interaction --no-progress
+          npm ci
+
+      - name: Build frontend assets
+        run: npm run build
+
+      - name: Prepare demo instance
+        run: |
+          # Mot de passe admin éphémère, propre à ce run
+          ADMIN_PASSWORD="$(openssl rand -hex 16)"
+          echo "::add-mask::$ADMIN_PASSWORD"
+          echo "ADMIN_PASSWORD=$ADMIN_PASSWORD" >> "$GITHUB_ENV"
+
+          cat > .env <<EOF
+          APP_NAME=Silo
+          APP_KEY=
+          APP_ENV=local
+          APP_DEBUG=false
+          APP_URL=http://127.0.0.1:8000
+          APP_LOCALE=en
+          APP_FALLBACK_LOCALE=en
+          DB_CONNECTION=sqlite
+          DB_DATABASE=${GITHUB_WORKSPACE}/database/database.sqlite
+          CACHE_STORE=file
+          SESSION_DRIVER=file
+          SESSION_SECURE_COOKIE=false
+          QUEUE_CONNECTION=sync
+          MAIL_MAILER=log
+          ADMIN_EMAIL=${ADMIN_EMAIL}
+          ADMIN_PASSWORD=${ADMIN_PASSWORD}
+          EOF
+          sed -i 's/^ *//' .env
+
+          php artisan key:generate --force
+          touch database/database.sqlite
+          php artisan migrate --force
+          php artisan db:seed --class=DemoSeeder --force
+          php artisan storage:link
+          echo "SHARE_TOKEN=$(cat storage/app/demo-share-token)" >> "$GITHUB_ENV"
+
+      - name: Start demo server
+        run: |
+          PHP_CLI_SERVER_WORKERS=4 php artisan serve --host=127.0.0.1 --port=8000 > serve.log 2>&1 &
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:8000/up >/dev/null && exit 0
+            sleep 1
+          done
+          cat serve.log
+          exit 1
+
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+
+      - name: Take screenshots
+        run: node scripts/screenshots.mjs
+        env:
+          BASE_URL: http://127.0.0.1:8000
+          OUT_DIR: site/screenshots
+
+      - name: Server logs
+        if: failure()
+        run: |
+          cat serve.log || true
+          tail -n 100 storage/logs/laravel.log || true
+
+      - name: Upload screenshots (review)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: site/screenshots
+
+      - name: Upload Pages artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -13,13 +13,15 @@
 ![Livewire](https://img.shields.io/badge/Livewire-4-4E56A6?logo=livewire&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
 
-[Features](#-features) · [Quick start](#-quick-start-docker) · [Configuration](#%EF%B8%8F-configuration) · [Security](#-security) · [Development](#-development)
+[Features](#-features) · [Screenshots](#-screenshots) · [Quick start](#-quick-start-docker) · [Configuration](#%EF%B8%8F-configuration) · [Security](#-security) · [Development](#-development)
 
-🇫🇷 [Version française](README.fr.md)
+🌐 [Website](https://pokertour.github.io/Silo/) · 🇫🇷 [Version française](README.fr.md)
 
 </div>
 
 ---
+
+<p align="center"><img src="docs/screenshots/dashboard.jpg" alt="Silo dashboard" width="100%"></p>
 
 Silo is a web application for teams that need one place to store and distribute their disk images: OS installers, VM templates, firmware, recovery media… It handles multi-gigabyte files gracefully (resumable chunked uploads, resumable downloads, background checksums), keeps access under control with groups and roles, and lets you share a file with anyone through expiring, password-protected links.
 
@@ -51,6 +53,27 @@ Silo is a web application for teams that need one place to store and distribute 
 - **Dashboard** with usage statistics, storage capacity and OS distribution.
 - **Audit log** of every change, user and group management, branding (name, logo, accent color).
 - **4 languages**: English, French, Spanish, German — detected from the browser.
+
+### 🎨 Interface
+- **Light & dark themes** that follow your system, an accent color you choose and your own logo.
+- **Command palette** (<kbd>⌘K</kbd>, <kbd>Ctrl K</kbd> or <kbd>/</kbd>) to search the library and jump to any page.
+- **Mobile-first layout** with a tab bar, a slide-in menu and bottom-sheet dialogs.
+- Clean, Apple-inspired design: every image is presented like a product, with its own silver disc.
+
+## 📸 Screenshots
+
+| | |
+|---|---|
+| ![Library](docs/screenshots/library.jpg) | ![Disk image details](docs/screenshots/detail.jpg) |
+| **Library** — search, filters, tags and bulk actions | **Details** — verified SHA-256, share links, history |
+| ![Upload](docs/screenshots/upload.jpg) | ![Public share page](docs/screenshots/share-public.jpg) |
+| **Upload** — resumable chunks or import from URL | **Share page** — what your recipients see |
+| ![Command palette](docs/screenshots/command-palette.jpg) | ![Administration](docs/screenshots/admin-stats.jpg) |
+| **Command palette** — <kbd>⌘K</kbd> / <kbd>/</kbd> to jump anywhere | **Administration** — storage, OS distribution, activity |
+| ![Dark theme](docs/screenshots/dashboard-dark.jpg) | ![Confirmation dialog](docs/screenshots/confirm-dialog.jpg) |
+| **Dark theme** — follows your system | **No browser popups** — custom dialogs everywhere |
+
+<p align="center"><img src="docs/screenshots/mobile.jpg" alt="Silo on mobile" width="90%"><br><sub>A real mobile layout: tab bar, slide-in menu and bottom sheets.</sub></p>
 
 ## 🚀 Quick start (Docker)
 
@@ -152,6 +175,9 @@ php artisan test
 ```bash
 ./vendor/bin/pint
 ```
+
+> [!NOTE]
+> The screenshots and the [website](https://pokertour.github.io/Silo/) are generated automatically by [`.github/workflows/pages.yml`](.github/workflows/pages.yml): it boots a demo instance seeded by `DemoSeeder` and captures every screen with Playwright (`scripts/screenshots.mjs`).
 
 ### Tech stack
 

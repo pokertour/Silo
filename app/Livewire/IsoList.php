@@ -2,11 +2,13 @@
 
 namespace App\Livewire;
 
+use App\Models\Group;
 use App\Models\IsoFile;
 use App\Models\Tag;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -15,12 +17,16 @@ class IsoList extends Component
 {
     use WithPagination;
 
+    #[Url(except: '')]
     public $search = '';
 
+    #[Url(except: 'all')]
     public $filter = 'all'; // all, public, ou un ID de groupe
 
+    #[Url(as: 'tag', except: '')]
     public $selectedTag = '';
 
+    #[Url(as: 'sort', except: 'recent')]
     public $sortBy = 'recent'; // recent, oldest, name, size
 
     public array $selected = [];
@@ -98,6 +104,12 @@ class IsoList extends Component
             message: trans_choice('app.:count fichier(s) mis à jour', $updated, ['count' => $updated])
                 .($skipped ? ' — '.trans_choice('app.:count ignoré(s) (non autorisé)', $skipped, ['count' => $skipped]) : '')
         );
+    }
+
+    public function resetFilters()
+    {
+        $this->reset(['search', 'filter', 'selectedTag']);
+        $this->resetPage();
     }
 
     public function clearSelection()
@@ -183,7 +195,8 @@ class IsoList extends Component
             ->all();
 
         return view('livewire.iso-list', [
-            'isos' => $query->paginate(15),
+            'isos' => $query->paginate(18),
+            'groups' => auth()->user()->hasRole('admin') ? Group::orderBy('name')->get() : auth()->user()->groups,
             'availableTags' => Tag::orderBy('name')->get(),
             'duplicateChecksums' => $duplicateChecksums,
         ]);

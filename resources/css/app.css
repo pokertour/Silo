@@ -1,55 +1,516 @@
-@import url("https://fonts.bunny.net/css?family=inter:400,500,600,700");
 @import 'tailwindcss';
-@import "starting-point-ui";
 @import "remixicon/fonts/remixicon.css";
-
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/geist-mono";
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
-@theme {
-    --font-sans: "Inter", sans-serif;
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant light (&:where(.light, .light *));
+
+/*
+|--------------------------------------------------------------------------
+| Silo — « Épure »
+|--------------------------------------------------------------------------
+| Propre et épuré, dans l'esprit des interfaces Apple : surfaces douces,
+| typographie Inter, une seule couleur d'accent (choisie par l'admin) et des
+| couleurs système réservées aux états. Toutes les couleurs passent par des
+| variables : le thème sombre se contente de les redéfinir.
+*/
+:root {
+    --accent: #0071e3;
+    --on-accent: #ffffff;
+
+    --bg: #f5f5f7;
+    --bg-2: rgb(236 236 240 / 0.78);
+    --surface: #ffffff;
+    --surface-2: rgb(0 0 0 / 0.045);
+    --elevated: #ffffff;
+    --selected: rgb(0 0 0 / 0.06);
+    --line: rgb(0 0 0 / 0.08);
+    --line-strong: rgb(0 0 0 / 0.14);
+    --ink: #1d1d1f;
+    --ink-2: #424245;
+    --ink-3: #86868b;
+    --accent-ink: var(--accent);
+    --accent-soft: color-mix(in srgb, var(--accent) 11%, transparent);
+    --art: #f2f2f5;
+    --hole: var(--art);
+
+    --ok: #248a3d;
+    --warn: #c93400;
+    --danger: #d70015;
+    --info: #0071e3;
+
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 6px 24px rgb(0 0 0 / 0.05);
+    --shadow-lg: 0 24px 60px -12px rgb(0 0 0 / 0.25), 0 0 0 1px rgb(0 0 0 / 0.04);
+    color-scheme: light;
+}
+
+.dark {
+    --bg: #000000;
+    --bg-2: rgb(28 28 30 / 0.82);
+    --surface: #1c1c1e;
+    --surface-2: rgb(255 255 255 / 0.08);
+    --elevated: #2c2c2e;
+    --selected: rgb(255 255 255 / 0.1);
+    --line: rgb(255 255 255 / 0.09);
+    --line-strong: rgb(255 255 255 / 0.16);
+    --ink: #f5f5f7;
+    --ink-2: #d1d1d6;
+    --ink-3: #8e8e93;
+    --accent-ink: color-mix(in srgb, var(--accent) 80%, #fff);
+    --accent-soft: color-mix(in srgb, var(--accent) 20%, transparent);
+    --art: #0b0b0c;
+
+    --ok: #30d158;
+    --warn: #ff9f0a;
+    --danger: #ff453a;
+    --info: #0a84ff;
+
+    --shadow: 0 0 0 1px rgb(255 255 255 / 0.06);
+    --shadow-lg: 0 24px 60px -12px rgb(0 0 0 / 0.8), 0 0 0 1px rgb(255 255 255 / 0.08);
+    color-scheme: dark;
+}
+
+@theme inline {
+    --font-sans: "Inter Variable", -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+    --font-display: "Inter Variable", -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
+    /* « font-mono » sert aux nombres (tailles, dates) : chiffres tabulaires, pas de police code */
+    --font-mono: "Inter Variable", -apple-system, system-ui, sans-serif;
+    --font-code: "Geist Mono Variable", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    --color-bg: var(--bg);
+    --color-bg-2: var(--bg-2);
+    --color-surface: var(--surface);
+    --color-surface-2: var(--surface-2);
+    --color-elevated: var(--elevated);
+    --color-selected: var(--selected);
+    --color-line: var(--line);
+    --color-line-strong: var(--line-strong);
+    --color-ink: var(--ink);
+    --color-ink-2: var(--ink-2);
+    --color-ink-3: var(--ink-3);
+    --color-accent: var(--accent);
+    --color-accent-ink: var(--accent-ink);
+    --color-accent-soft: var(--accent-soft);
+    --color-on-accent: var(--on-accent);
+    --color-art: var(--art);
+    --color-ok: var(--ok);
+    --color-warn: var(--warn);
+    --color-danger: var(--danger);
+    --color-info: var(--info);
 }
 
 @layer base {
-    button, 
-    [type='button'], 
-    [type='reset'], 
+    html {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        @apply bg-bg text-ink font-sans antialiased;
+        letter-spacing: -0.011em;
+        font-feature-settings: "cv11", "ss01", "ss03";
+    }
+
+    h1, h2, h3, h4 {
+        letter-spacing: -0.022em;
+    }
+
+    .font-mono {
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.005em;
+    }
+
+    button,
+    [type='button'],
+    [type='reset'],
     [type='submit'] {
         cursor: pointer;
+    }
+
+    ::selection {
+        background: color-mix(in srgb, var(--accent) 30%, transparent);
+    }
+
+    [x-cloak] {
+        display: none !important;
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: var(--line-strong) transparent;
+    }
+}
+
+@layer components {
+    /* Décors de l'ancien thème : neutralisés (l'épure n'en a pas besoin) */
+    .backdrop-dots,
+    .halo {
+        background: none;
+    }
+
+    /* Typographie */
+    .eyebrow {
+        @apply text-[13px] font-semibold tracking-[0.01em] text-ink-3 uppercase;
+    }
+
+    .label {
+        @apply mb-1.5 block text-[13px] font-medium text-ink-2;
+    }
+
+    .spec {
+        @apply text-xs font-medium text-ink-3;
+    }
+
+    .font-code {
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* Surfaces */
+    .card {
+        @apply rounded-[18px] bg-surface;
+        box-shadow: var(--shadow);
+    }
+
+    .card-hover {
+        @apply transition duration-200;
+    }
+
+    .card-hover:hover {
+        box-shadow: 0 2px 4px rgb(0 0 0 / 0.04), 0 14px 36px rgb(0 0 0 / 0.08);
+        transform: translateY(-2px);
+    }
+
+    .dark .card-hover:hover {
+        box-shadow: 0 0 0 1px rgb(255 255 255 / 0.12);
+    }
+
+    .panel-title {
+        @apply flex items-center gap-2 text-[15px] font-semibold text-ink;
+    }
+
+    .panel-title i {
+        @apply text-accent-ink;
+    }
+
+    /* Boutons : pilules, comme sur macOS / iOS */
+    .btn {
+        @apply inline-flex h-9 items-center justify-center gap-1.5 rounded-full px-[18px] text-sm font-medium whitespace-nowrap transition duration-150 select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-40;
+    }
+
+    .btn i {
+        @apply text-[17px] leading-none;
+    }
+
+    .btn-primary {
+        @apply bg-accent text-on-accent;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+        filter: brightness(1.08);
+    }
+
+    .btn-primary:active:not(:disabled) {
+        filter: brightness(0.94);
+    }
+
+    .btn-secondary {
+        @apply bg-surface-2 text-accent-ink;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+        background: color-mix(in srgb, var(--ink) 9%, transparent);
+    }
+
+    .btn-ghost {
+        @apply text-accent-ink hover:bg-surface-2;
+    }
+
+    .btn-danger {
+        @apply text-danger;
+        background: color-mix(in srgb, var(--danger) 10%, transparent);
+    }
+
+    .btn-danger:hover:not(:disabled) {
+        @apply bg-danger text-white;
+    }
+
+    .btn-sm {
+        @apply h-7 px-3 text-[13px];
+    }
+
+    .btn-lg {
+        @apply h-11 px-6 text-[15px];
+    }
+
+    .icon-btn {
+        @apply inline-grid size-8 shrink-0 place-items-center rounded-full text-ink-2 transition hover:bg-surface-2 hover:text-ink focus-visible:outline-2 focus-visible:outline-accent;
+    }
+
+    .icon-btn i {
+        @apply text-[17px] leading-none;
+    }
+
+    .icon-btn.danger:hover {
+        @apply text-danger;
+        background: color-mix(in srgb, var(--danger) 10%, transparent);
+    }
+
+    /* Champs */
+    .input {
+        @apply h-10 w-full rounded-[10px] border border-transparent bg-surface-2 px-3 text-sm text-ink transition outline-none placeholder:text-ink-3;
+    }
+
+    .input:focus {
+        @apply bg-surface;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent);
+    }
+
+    textarea.input {
+        @apply h-auto py-2.5;
+    }
+
+    .input-mono {
+        @apply font-code text-[13px];
+    }
+
+    .field-error {
+        @apply mt-1.5 flex items-center gap-1 text-xs text-danger;
+    }
+
+    /* Pastilles */
+    .badge {
+        @apply inline-flex h-[22px] items-center gap-1 rounded-full bg-surface-2 px-2.5 text-[11.5px] font-medium whitespace-nowrap text-ink-2;
+    }
+
+    .badge i {
+        @apply text-[13px] leading-none;
+    }
+
+    .badge-accent {
+        @apply bg-accent-soft text-accent-ink;
+    }
+
+    .badge-ok {
+        @apply text-ok;
+        background: color-mix(in srgb, var(--ok) 12%, transparent);
+    }
+
+    .badge-warn {
+        @apply text-warn;
+        background: color-mix(in srgb, var(--warn) 12%, transparent);
+    }
+
+    .badge-danger {
+        @apply text-danger;
+        background: color-mix(in srgb, var(--danger) 11%, transparent);
+    }
+
+    .badge-info {
+        @apply text-info;
+        background: color-mix(in srgb, var(--info) 11%, transparent);
+    }
+
+    .tag {
+        @apply inline-flex h-[22px] items-center gap-1.5 rounded-full bg-surface-2 px-2.5 text-[11.5px] font-medium text-ink-2;
+    }
+
+    .tag::before {
+        content: "";
+        @apply size-1.5 rounded-full;
+        background: var(--tag);
+    }
+
+    /* Filtres : contrôle segmenté */
+    .segmented {
+        @apply inline-flex max-w-full gap-0.5 rounded-[10px] bg-surface-2 p-0.5;
+    }
+
+    .chip {
+        @apply inline-flex h-7 shrink-0 items-center gap-1.5 rounded-[8px] px-3 text-[13px] whitespace-nowrap text-ink-2 transition hover:text-ink;
+    }
+
+    .chip i {
+        @apply text-sm text-ink-3;
+    }
+
+    .chip.is-active {
+        @apply bg-surface font-medium text-ink;
+        box-shadow: 0 1px 3px rgb(0 0 0 / 0.12), 0 0 0 0.5px rgb(0 0 0 / 0.04);
+    }
+
+    .dark .chip.is-active {
+        @apply bg-elevated;
+    }
+
+    /* Navigation façon barre latérale macOS */
+    .nav-item {
+        @apply flex h-8 items-center gap-2.5 rounded-lg px-2.5 text-[13.5px] text-ink transition hover:bg-surface-2;
+    }
+
+    .nav-item i {
+        @apply text-[17px] leading-none text-accent-ink;
+    }
+
+    .nav-item.is-active {
+        @apply bg-selected font-medium;
+    }
+
+    /* Tableaux */
+    .table {
+        @apply w-full text-left text-sm;
+    }
+
+    .table thead th {
+        @apply border-b border-line px-5 py-3 text-xs font-semibold whitespace-nowrap text-ink-3;
+    }
+
+    .table tbody td {
+        @apply border-b border-line px-5 py-3 align-middle;
+    }
+
+    .table tbody tr:last-child td {
+        @apply border-b-0;
+    }
+
+    .table tbody tr {
+        @apply transition-colors;
+    }
+
+    .table tbody tr:hover {
+        @apply bg-surface-2;
+    }
+
+    /* Avatar (style Contacts) */
+    .avatar {
+        @apply inline-grid shrink-0 place-items-center overflow-hidden rounded-full font-semibold text-white;
+        background: linear-gradient(180deg, #a1a1a6, #6e6e73);
+        letter-spacing: 0;
+    }
+
+    /*
+     * Le CD : argenté, irisé, avec un moyeu légèrement teinté selon l'OS (--hue).
+     */
+    .disc {
+        --size: 52px;
+        @apply relative inline-grid shrink-0 place-items-center rounded-full;
+        width: var(--size);
+        height: var(--size);
+        background:
+            radial-gradient(circle, var(--hole) 0 11%, rgb(255 255 255 / 0.95) 11.5% 13%, color-mix(in srgb, var(--hue) 22%, #e3e3e8) 13.5% 20%, transparent 20.5%),
+            repeating-radial-gradient(circle, rgb(255 255 255 / 0) 0 1px, rgb(255 255 255 / 0.18) 1px 2px),
+            conic-gradient(from 20deg, #e8e8ed, #c7c7cc 12%, #f2f2f7 22%, #d6e4ff 30%, #f2e4ff 36%, #ffe8d6 42%, #e8e8ed 50%, #c7c7cc 62%, #f5f5f7 72%, #d6fff0 80%, #e8e8ed 90%, #c7c7cc);
+        box-shadow: 0 10px 24px -10px rgb(0 0 0 / 0.35), inset 0 0 0 1px rgb(0 0 0 / 0.06);
+    }
+
+    .disc::after {
+        content: "";
+        @apply pointer-events-none absolute inset-0 rounded-full;
+        background: linear-gradient(140deg, rgb(255 255 255 / 0.75), transparent 40%, transparent 60%, rgb(255 255 255 / 0.25));
+    }
+
+    .disc-sm {
+        --size: 34px;
+    }
+
+    .disc-lg {
+        --size: 84px;
+    }
+
+    .disc-xl {
+        --size: 128px;
+    }
+
+    .disc-ext {
+        @apply absolute -right-1 -bottom-1 z-10 rounded-full bg-elevated px-1.5 text-[9px] leading-4 font-semibold tracking-wide text-ink-2 uppercase;
+        box-shadow: 0 1px 3px rgb(0 0 0 / 0.15);
+    }
+
+    /* Vignette (la « pochette » d'un fichier) */
+    .art {
+        @apply relative grid place-items-center rounded-xl bg-art;
+    }
+
+    /* Progression */
+    .meter {
+        @apply h-[5px] w-full overflow-hidden rounded-full bg-surface-2;
+    }
+
+    .meter > span {
+        @apply block h-full rounded-full bg-accent transition-[width] duration-500;
+    }
+
+    kbd,
+    .kbd {
+        @apply inline-grid h-5 min-w-5 place-items-center rounded-[5px] bg-surface-2 px-1 font-sans text-[10.5px] font-medium text-ink-3;
+    }
+
+    /* Modales */
+    .modal-panel {
+        @apply overflow-hidden rounded-t-[22px] bg-elevated sm:rounded-[22px];
+        box-shadow: var(--shadow-lg);
+    }
+
+    /* Listes façon Réglages */
+    .list-row {
+        @apply flex items-center gap-3 border-t border-line px-[18px] py-3 first:border-t-0;
+    }
+
+    .sym {
+        @apply grid size-[30px] shrink-0 place-items-center rounded-[8px] text-[15px] text-white;
     }
 }
 
 @layer utilities {
-    .glass {
-        background: rgba(30, 41, 59, 0.5);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .aurora-glow {
-        filter: blur(100px);
-        z-index: -1;
+    .scrollbar-none {
+        scrollbar-width: none;
     }
 
-    .aurora-bg {
-        background: radial-gradient(circle at top left, #1e1b4b, #0f172a 50%, #020617);
-    }
-    
-    .sidebar-active { 
-        background: linear-gradient(to right, rgba(99, 102, 241, 0.1), transparent); 
-        border-left: 2px solid #6366f1; 
+    .scrollbar-none::-webkit-scrollbar {
+        display: none;
     }
 
-    /* Input Number Spinners Hidden */
-    input[type=number]::-webkit-inner-spin-button, 
-    input[type=number]::-webkit-outer-spin-button { 
-        -webkit-appearance: none; 
-        margin: 0; 
+    .text-balance {
+        text-wrap: balance;
     }
-    input[type=number] { 
-        -moz-appearance: textfield; 
+
+    .animate-rise {
+        animation: rise 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+    }
+
+    /* Rotation très lente, réservée aux indicateurs d'activité */
+    .animate-spin-slow {
+        animation: spin 6s linear infinite;
+    }
+}
+
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
     }
 }

@@ -23,6 +23,8 @@ class Dashboard extends Component
 
     public $recentUploads;
 
+    public $diskCapacity = null;
+
     public $viewMode = 'grid';
 
     public function mount()
@@ -77,6 +79,10 @@ class Dashboard extends Component
         }
 
         $this->recentUploads = (clone $base)->latest()->take(5)->get();
+
+        // Capacité du volume de stockage local (anneau de la statistique « Stockage »)
+        $capacity = @disk_total_space(storage_path());
+        $this->diskCapacity = $capacity ?: null;
     }
 
     #[On('isoDeleted')]
@@ -96,10 +102,13 @@ class Dashboard extends Component
             $query->where('group_id', $this->filter);
         }
 
-        $isoFiles = $query->latest()->get();
+        $isoFiles = $query->latest()->take(6)->get();
+
+        $groups = auth()->user()->hasRole('admin') ? Group::orderBy('name')->get() : auth()->user()->groups;
 
         return view('livewire.dashboard', [
             'isoFiles' => $isoFiles,
+            'groups' => $groups,
         ]);
     }
 }
