@@ -114,11 +114,12 @@ await capture('admin-storage', async () => {
     await shoot(page, 'admin-storage');
 });
 
-for (const [name, label] of [['admin-mail', /^email$/i], ['admin-about', /^about$/i]]) {
+for (const [name, label] of [['admin-mail', /^\s*Email\s*$/], ['admin-about', /^\s*About\s*$/]]) {
     await capture(name, async () => {
         await page.goto(`${BASE_URL}/admin/settings`);
         await settle(page);
-        await page.getByRole('button', { name: label }).first().click();
+        // hasText ignore le glyphe de l'icône (contenu ::before), contrairement au nom accessible
+        await page.locator('button.nav-item', { hasText: label }).first().click();
         await settle(page);
         await page.waitForTimeout(800);
         await shoot(page, name);
