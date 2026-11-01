@@ -61,6 +61,7 @@ jobs:
 
           cat > .env <<EOF
           APP_NAME=Silo
+          APP_KEY=
           APP_ENV=local
           APP_DEBUG=false
           APP_URL=http://127.0.0.1:8000
