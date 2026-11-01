@@ -21,6 +21,8 @@
         </x-slot:actions>
     </x-ui.page-header>
 
+    @livewire('imports-panel')
+
     {{-- Barre d'outils --}}
     <div class="relative z-20">
         <div class="flex flex-col gap-2 lg:flex-row">

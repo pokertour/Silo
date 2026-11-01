@@ -1,15 +1,18 @@
 <div class="relative w-full max-w-[420px] animate-rise">
 
     <div class="card p-7 sm:p-9">
-        <x-ui.mark :size="56" class="mb-6" />
+        <x-ui.mark :size="64" class="mx-auto mb-5" />
+        <div class="text-center">
         @if (! $requiresTwoFactor)
-            <p class="eyebrow mb-3">{{ __('app.Accès sécurisé') }}</p>
+            <p class="eyebrow mb-2">{{ __('app.Accès sécurisé') }}</p>
             <h1 class="font-display text-3xl font-semibold text-ink">{{ __('app.Bon retour') }}</h1>
             <p class="mt-1.5 text-sm text-ink-2">{{ __('app.Connectez-vous pour accéder à vos images disque.') }}</p>
         @else
             <h1 class="font-display text-3xl font-semibold text-ink">{{ __('app.Vérification') }}</h1>
             <p class="mt-1.5 text-sm text-ink-2">{{ __('app.Saisissez le code de votre application d\'authentification ou un code de secours.') }}</p>
         @endif
+
+        </div>
 
         <form wire:submit="login" class="mt-7 space-y-5">
             @if (! $requiresTwoFactor)

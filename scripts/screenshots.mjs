@@ -114,6 +114,17 @@ await capture('admin-storage', async () => {
     await shoot(page, 'admin-storage');
 });
 
+for (const [name, label] of [['admin-mail', /^email$/i], ['admin-about', /^about$/i]]) {
+    await capture(name, async () => {
+        await page.goto(`${BASE_URL}/admin/settings`);
+        await settle(page);
+        await page.getByRole('button', { name: label }).first().click();
+        await settle(page);
+        await page.waitForTimeout(800);
+        await shoot(page, name);
+    });
+}
+
 await capture('detail', async () => {
     await page.goto(`${BASE_URL}/isos`);
     await settle(page);

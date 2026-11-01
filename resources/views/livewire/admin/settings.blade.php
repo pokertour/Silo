@@ -2,6 +2,7 @@
     $tabs = [
         'general' => ['icon' => 'ri-palette-line', 'label' => __('app.Général')],
         'storage' => ['icon' => 'ri-hard-drive-3-line', 'label' => __('app.Stockages Disponibles')],
+        'mail' => ['icon' => 'ri-mail-settings-line', 'label' => __('app.E-mail')],
         'about' => ['icon' => 'ri-information-line', 'label' => __('app.À propos')],
     ];
     $swatches = ['#0071e3', '#5856d6', '#af52de', '#ff2d55', '#ff3b30', '#ff9500', '#34c759', '#30b0c7', '#8e8e93'];
@@ -202,22 +203,172 @@
                 </div>
             @endif
 
-            @if ($activeTab === 'about')
-                <section class="card relative overflow-hidden p-8">
-                    <div class="pointer-events-none absolute inset-0 backdrop-dots opacity-70 [mask-image:linear-gradient(to_left,black,transparent_70%)]"></div>
-                    <div class="relative flex flex-col gap-6 sm:flex-row sm:items-center">
-                        <x-ui.mark :size="72" />
+            @if ($activeTab === 'mail')
+                <form wire:submit="saveMail" class="card p-6" x-data="{ enabled: $wire.entangle('mail_enabled') }">
+                    <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
                         <div>
-                            <h2 class="font-display text-3xl font-semibold text-ink">Silo</h2>
-                            <p class="font-mono text-sm text-ink-2">{{ __('app.Version') }} {{ config('version.current') }}</p>
+                            <h2 class="panel-title"><i class="ri-mail-settings-line text-accent-ink"></i>{{ __('app.Serveur d\'envoi (SMTP)') }}</h2>
+                            <p class="mt-1 max-w-xl text-sm text-ink-3">{{ __('app.Utilisé pour les invitations, la réinitialisation des mots de passe et les notifications.') }}</p>
+                        </div>
+                        @if ($mail_enabled && $mail_host)
+                            <span class="badge badge-ok"><i class="ri-checkbox-circle-fill"></i>{{ __('app.Configuration personnalisée') }}</span>
+                        @else
+                            <span class="badge">{{ __('app.Configuration du .env') }} · {{ config('mail.default') }}</span>
+                        @endif
+                    </div>
+
+                    <label class="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-line bg-bg-2 px-4 py-3.5">
+                        <span>
+                            <span class="block text-sm font-medium text-ink">{{ __('app.Utiliser ces paramètres') }}</span>
+                            <span class="block text-xs text-ink-3">{{ __('app.Désactivé, Silo utilise les variables MAIL_* de l\'environnement.') }}</span>
+                        </span>
+                        <input type="checkbox" x-model="enabled" class="size-5 shrink-0 accent-[var(--accent)]">
+                    </label>
+
+                    <div class="mt-6 space-y-5 transition" :class="!enabled && 'opacity-50'">
+                        <div class="grid gap-4 sm:grid-cols-[minmax(0,1fr)_110px]">
+                            <div>
+                                <label class="label" for="mail-host">{{ __('app.Serveur') }}</label>
+                                <input wire:model="mail_host" id="mail-host" type="text" class="input input-mono" placeholder="smtp.example.com" autocomplete="off">
+                                @error('mail_host') <p class="field-error">{{ $message }}</p> @enderror
+                            </div>
+                            <div>
+                                <label class="label" for="mail-port">Port</label>
+                                <input wire:model="mail_port" id="mail-port" type="number" min="1" max="65535" class="input input-mono" placeholder="587">
+                                @error('mail_port') <p class="field-error">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="label">{{ __('app.Sécurité') }}</span>
+                            <div class="segmented" x-data="{ enc: $wire.entangle('mail_encryption') }">
+                                <button type="button" class="chip" :class="enc === 'tls' && 'is-active'" @click="enc = 'tls'; $wire.mail_port = 587">STARTTLS</button>
+                                <button type="button" class="chip" :class="enc === 'ssl' && 'is-active'" @click="enc = 'ssl'; $wire.mail_port = 465">SSL / TLS</button>
+                                <button type="button" class="chip" :class="enc === 'none' && 'is-active'" @click="enc = 'none'">{{ __('app.Aucune') }}</button>
+                            </div>
+                            @error('mail_encryption') <p class="field-error">{{ $message }}</p> @enderror
+                        </div>
+
+                        <div class="grid gap-4 sm:grid-cols-2">
+                            <div>
+                                <label class="label" for="mail-username">{{ __('app.Username') }}</label>
+                                <input wire:model="mail_username" id="mail-username" type="text" class="input" autocomplete="off">
+                                @error('mail_username') <p class="field-error">{{ $message }}</p> @enderror
+                            </div>
+                            <div>
+                                <label class="label" for="mail-password">{{ __('app.Password') }}</label>
+                                <input wire:model="mail_password" id="mail-password" type="password" class="input" autocomplete="new-password"
+                                       placeholder="{{ $mail_password_set ? __('app.Inchangé') : '' }}">
+                                @if ($mail_password_set)
+                                    <label class="mt-2 flex items-center gap-2 text-xs text-ink-3">
+                                        <input wire:model="mail_clear_password" type="checkbox" class="size-3.5 accent-[var(--accent)]">{{ __('app.Supprimer le mot de passe enregistré') }}
+                                    </label>
+                                @endif
+                                @error('mail_password') <p class="field-error">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
+
+                        <div class="grid gap-4 border-t border-line pt-5 sm:grid-cols-2">
+                            <div>
+                                <label class="label" for="mail-from-address">{{ __('app.Adresse d\'expédition') }}</label>
+                                <input wire:model="mail_from_address" id="mail-from-address" type="email" class="input" placeholder="silo@example.com">
+                                @error('mail_from_address') <p class="field-error">{{ $message }}</p> @enderror
+                            </div>
+                            <div>
+                                <label class="label" for="mail-from-name">{{ __('app.Nom d\'expéditeur') }}</label>
+                                <input wire:model="mail_from_name" id="mail-from-name" type="text" class="input" placeholder="{{ config('app.name') }}">
+                                @error('mail_from_name') <p class="field-error">{{ $message }}</p> @enderror
+                            </div>
                         </div>
                     </div>
-                    <dl class="relative mt-8 grid gap-4 border-t border-line pt-6 sm:grid-cols-3">
-                        <div><dt class="spec">{{ __('app.Créateur') }}</dt><dd class="mt-1 text-ink">Pokertour</dd></div>
-                        <div><dt class="spec">{{ __('app.Licence') }}</dt><dd class="mt-1 text-ink">MIT</dd></div>
-                        <div><dt class="spec">{{ __('app.Dépôt Git Officiel') }}</dt><dd class="mt-1"><a href="https://github.com/pokertour/Silo" target="_blank" rel="noopener" class="font-mono text-sm text-accent-ink hover:underline">github.com/pokertour/Silo <i class="ri-external-link-line"></i></a></dd></div>
-                    </dl>
-                </section>
+
+                    <div class="mt-8 flex flex-col-reverse gap-2 border-t border-line pt-5 sm:flex-row sm:items-center sm:justify-between">
+                        <button type="button" wire:click="sendTestMail" wire:loading.attr="disabled" wire:target="sendTestMail" class="btn btn-secondary">
+                            <i class="ri-send-plane-line" wire:loading.remove wire:target="sendTestMail"></i><i class="ri-loader-4-line animate-spin" wire:loading wire:target="sendTestMail"></i>
+                            {{ __('app.Envoyer un e-mail de test') }}
+                        </button>
+                        <button type="submit" class="btn btn-primary"><i class="ri-save-3-line"></i>{{ __('app.Enregistrer') }}</button>
+                    </div>
+                    <p class="mt-3 text-xs text-ink-3">{{ __('app.Le test utilise la configuration enregistrée et est envoyé à :email.', ['email' => auth()->user()->email]) }}</p>
+                </form>
+            @endif
+
+            @if ($activeTab === 'about' && $system)
+                <div class="space-y-6" x-data="{
+                        latest: null,
+                        current: @js($system['version']),
+                        init() {
+                            fetch('https://api.github.com/repos/pokertour/Silo/releases/latest', { headers: { Accept: 'application/vnd.github+json' } })
+                                .then(r => r.ok ? r.json() : null)
+                                .then(r => { if (r && r.tag_name) this.latest = r })
+                                .catch(() => {})
+                        },
+                        get upToDate() { return this.latest && this.latest.tag_name.replace(/^v/, '') === String(this.current).replace(/^v/, '') },
+                    }">
+                    <section class="card px-6 pt-12 pb-8 text-center">
+                        <x-ui.mark :size="112" class="mx-auto" />
+                        <h2 class="mt-6 font-display text-4xl font-semibold tracking-tight text-ink">Silo</h2>
+                        <p class="mt-1.5 text-sm text-ink-2">{{ __('app.Version') }} <span class="font-mono">{{ $system['version'] }}</span></p>
+                        <p class="mx-auto mt-4 max-w-md text-[15px] text-ink-2">{{ __('app.Un coffre-fort auto-hébergé pour vos images disque : déposez, organisez et partagez ISO, disques de VM et grandes archives.') }}</p>
+
+                        <div class="mt-5 flex min-h-7 justify-center" x-cloak>
+                            <template x-if="latest && upToDate">
+                                <span class="badge badge-ok"><i class="ri-checkbox-circle-fill"></i>{{ __('app.Silo est à jour') }}</span>
+                            </template>
+                            <template x-if="latest && !upToDate">
+                                <a :href="latest.html_url" target="_blank" rel="noopener" class="badge badge-accent hover:opacity-80">
+                                    <i class="ri-sparkling-2-fill"></i><span x-text="@js(__('app.Dernière version disponible')) + ' : ' + latest.tag_name"></span><i class="ri-arrow-right-up-line"></i>
+                                </a>
+                            </template>
+                        </div>
+
+                        <div class="mt-6 flex flex-wrap justify-center gap-2">
+                            <a href="https://github.com/pokertour/Silo" target="_blank" rel="noopener" class="btn btn-secondary btn-sm"><i class="ri-github-fill"></i>GitHub</a>
+                            <a href="https://pokertour.github.io/Silo/" target="_blank" rel="noopener" class="btn btn-secondary btn-sm"><i class="ri-global-line"></i>{{ __('app.Site web') }}</a>
+                            <a href="https://github.com/pokertour/Silo/releases" target="_blank" rel="noopener" class="btn btn-secondary btn-sm"><i class="ri-history-line"></i>{{ __('app.Notes de version') }}</a>
+                            <a href="https://github.com/pokertour/Silo/issues/new" target="_blank" rel="noopener" class="btn btn-ghost btn-sm"><i class="ri-bug-line"></i>{{ __('app.Signaler un problème') }}</a>
+                        </div>
+                    </section>
+
+                    <div class="grid gap-6 lg:grid-cols-2">
+                        <section class="card overflow-hidden">
+                            <h3 class="eyebrow px-[18px] pt-4 pb-2">{{ __('app.Système') }}</h3>
+                            @foreach ([
+                                ['ri-git-commit-line', __('app.Version'), $system['version']],
+                                ['ri-code-s-slash-line', 'PHP', $system['php']],
+                                ['ri-stack-line', 'Laravel', $system['laravel']],
+                                ['ri-database-2-line', __('app.Base de données'), $system['database']],
+                                ['ri-flashlight-line', __('app.Cache / file d\'attente'), $system['cache'].' / '.$system['queue']],
+                                ['ri-mail-line', __('app.E-mail'), $system['mail'].' ('.($system['mail_source'] === 'admin' ? __('app.administration') : '.env').')'],
+                                ['ri-server-line', __('app.Environnement'), $system['environment']],
+                            ] as [$icon, $label, $value])
+                                <div class="flex items-center justify-between gap-4 border-t border-line px-[18px] py-2.5 text-sm">
+                                    <span class="flex items-center gap-2.5 text-ink-2"><i class="{{ $icon }} text-ink-3"></i>{{ $label }}</span>
+                                    <span class="truncate font-mono text-[13px] text-ink">{{ $value }}</span>
+                                </div>
+                            @endforeach
+                        </section>
+
+                        <section class="card overflow-hidden">
+                            <h3 class="eyebrow px-[18px] pt-4 pb-2">{{ __('app.Bibliothèque') }}</h3>
+                            @foreach (array_filter([
+                                ['ri-disc-line', __('app.Images disque'), number_format($system['files'], 0, ',', ' ')],
+                                ['ri-pie-chart-2-line', __('app.Volume total'), \Illuminate\Support\Number::fileSize($system['size'], precision: 1)],
+                                ['ri-hard-drive-3-line', __('app.Stockages'), $system['storages']],
+                                $system['free'] ? ['ri-hard-drive-line', __('app.Espace libre (stockage par défaut)'), $system['free']] : null,
+                            ]) as [$icon, $label, $value])
+                                <div class="flex items-center justify-between gap-4 border-t border-line px-[18px] py-2.5 text-sm">
+                                    <span class="flex items-center gap-2.5 text-ink-2"><i class="{{ $icon }} text-ink-3"></i>{{ $label }}</span>
+                                    <span class="font-mono text-[13px] text-ink">{{ $value }}</span>
+                                </div>
+                            @endforeach
+                            <div class="border-t border-line px-[18px] py-4 text-xs text-ink-3">
+                                {{ __('app.Créé par') }} <a href="https://github.com/pokertour" target="_blank" rel="noopener" class="text-accent-ink hover:underline">Pokertour</a>
+                                · {{ __('app.Publié sous licence') }} <span class="text-ink-2">MIT</span>
+                            </div>
+                        </section>
+                    </div>
+                </div>
             @endif
         </div>
     </div>

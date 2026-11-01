@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Group;
 use App\Models\Invitation;
 use App\Models\IsoFile;
+use App\Models\IsoImport;
 use App\Models\ShareLink;
 use App\Models\Tag;
 use App\Models\User;
@@ -165,6 +166,27 @@ class DemoSeeder extends Seeder
         $ubuntuShare = ShareLink::where('iso_file_id', $isos['Ubuntu Server 24.04.1 LTS']->id)->first();
         $admin->notify(new IsoImportFinished(true, 'Alpine Linux 3.20 virt', $isos['Alpine Linux 3.20 virt']->id));
         $admin->notify(new ShareLinkDownloaded($ubuntuShare));
+
+        // Imports depuis une URL : un en cours, un en échec
+        IsoImport::create([
+            'user_id' => $admin->id,
+            'url' => 'https://download.rockylinux.org/pub/rocky/9/isos/x86_64/Rocky-9.5-x86_64-dvd.iso',
+            'name' => 'Rocky Linux 9.5 DVD',
+            'status' => IsoImport::DOWNLOADING,
+            'bytes_downloaded' => 6_120_000_000,
+            'bytes_total' => 10_920_000_000,
+            'bytes_per_second' => 48_000_000,
+            'started_at' => $now->copy()->subMinutes(2),
+        ]);
+        IsoImport::create([
+            'user_id' => $admin->id,
+            'url' => 'https://mirror.example.net/images/freebsd-14.2-amd64-disc1.iso',
+            'name' => 'FreeBSD 14.2',
+            'status' => IsoImport::FAILED,
+            'error' => 'HTTP 404 Not Found',
+            'started_at' => $now->copy()->subMinutes(40),
+            'finished_at' => $now->copy()->subMinutes(39),
+        ]);
 
         // Jeton utilisé par le script de captures pour la page publique de partage
         file_put_contents(storage_path('app/demo-share-token'), $publicShareToken);

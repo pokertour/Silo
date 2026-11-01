@@ -64,6 +64,7 @@ class Navigation
             }
         }
 
+        $items[] = ['label' => __('app.Importer depuis une URL'), 'url' => route('upload', ['source' => 'url']), 'icon' => 'ri-link', 'group' => __('app.Espace de travail')];
         $items[] = ['label' => __('app.Mon Profil'), 'url' => route('profile'), 'icon' => 'ri-user-settings-line', 'group' => __('app.Compte')];
 
         return $items;

@@ -18,6 +18,8 @@
         </x-slot:actions>
     </x-ui.page-header>
 
+    @livewire('imports-panel')
+
     {{-- Statistiques --}}
     <section class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         @foreach ($stats as $index => $stat)
@@ -101,7 +103,7 @@
                 <span class="sym mb-3 bg-[#34c759]"><i class="ri-link"></i></span>
                 <h3 class="text-[15px] font-semibold text-ink">{{ __('app.Importez directement depuis une URL') }}</h3>
                 <p class="mt-1 text-[13px] text-ink-3">{{ __('app.Le serveur télécharge l\'image en arrière-plan et vérifie son empreinte.') }}</p>
-                <a href="{{ route('upload') }}" wire:navigate class="btn btn-secondary btn-sm mt-4">{{ __('app.Importer une URL') }}</a>
+                <a href="{{ route('upload', ['source' => 'url']) }}" wire:navigate class="btn btn-secondary btn-sm mt-4">{{ __('app.Importer une URL') }}</a>
             </section>
         </aside>
     </div>

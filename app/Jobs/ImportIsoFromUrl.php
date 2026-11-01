@@ -2,8 +2,10 @@
 
 namespace App\Jobs;
 
+use App\Exceptions\ImportCancelledException;
 use App\Livewire\Iso\Upload;
 use App\Models\IsoFile;
+use App\Models\IsoImport;
 use App\Models\Tag;
 use App\Models\User;
 use App\Notifications\IsoImportFinished;
@@ -25,19 +27,36 @@ class ImportIsoFromUrl implements ShouldQueue
 
     private const MAX_REDIRECTS = 5;
 
+    /** Intervalle minimal entre deux mises à jour de la progression (secondes). */
+    private const PROGRESS_INTERVAL = 1.0;
+
+    private ?IsoImport $import = null;
+
+    private float $lastProgressAt = 0;
+
     /**
      * @param  array  $attributes  Métadonnées du futur IsoFile (name, disk, user_id, group_id…)
      * @param  array  $tags  Noms de tags à associer
+     * @param  int|null  $importId  Suivi existant (créé par l'interface) ; sinon il est créé ici
      */
     public function __construct(
         public string $url,
         public array $attributes,
         public array $tags = [],
+        public ?int $importId = null,
     ) {}
 
     public function handle(): void
     {
         $user = User::find($this->attributes['user_id']);
+        $import = $this->trackedImport();
+
+        // Annulé avant même d'avoir démarré
+        if ($import->status === IsoImport::CANCELLED) {
+            return;
+        }
+
+        $import->update(['status' => IsoImport::DOWNLOADING, 'started_at' => now(), 'error' => null]);
 
         try {
             // Téléchargement en streaming vers un fichier temporaire local
@@ -51,6 +70,8 @@ class ImportIsoFromUrl implements ShouldQueue
             if (! $size) {
                 throw new \RuntimeException('Le fichier téléchargé est vide.');
             }
+
+            $import->update(['status' => IsoImport::PROCESSING, 'bytes_downloaded' => $size, 'bytes_total' => $size]);
 
             // Extension depuis l'URL, contrainte à la même whitelist que l'upload
             $extension = strtolower(pathinfo(parse_url($finalUrl, PHP_URL_PATH) ?? '', PATHINFO_EXTENSION));
@@ -81,6 +102,8 @@ class ImportIsoFromUrl implements ShouldQueue
                 $isoFile->tags()->sync($tagIds);
             }
 
+            $import->update(['status' => IsoImport::COMPLETED, 'iso_file_id' => $isoFile->id, 'finished_at' => now(), 'bytes_per_second' => null]);
+
             CalculateIsoChecksum::dispatch($isoFile);
 
             $user?->notify(new IsoImportFinished(true, $this->attributes['name'], $isoFile->id));
@@ -89,10 +112,91 @@ class ImportIsoFromUrl implements ShouldQueue
                 unlink($absoluteTemp);
             }
 
+            // Annulation : Guzzle peut envelopper notre exception, on se fie donc au statut en base
+            if ($e instanceof ImportCancelledException || IsoImport::whereKey($import->id)->value('status') === IsoImport::CANCELLED) {
+                $import->update(['status' => IsoImport::CANCELLED, 'finished_at' => now(), 'bytes_per_second' => null]);
+
+                return;
+            }
+
+            $import->update([
+                'status' => IsoImport::FAILED,
+                'error' => Str::limit($e->getMessage(), 500),
+                'finished_at' => now(),
+                'bytes_per_second' => null,
+            ]);
+
             $user?->notify(new IsoImportFinished(false, $this->attributes['name'], null, $e->getMessage()));
 
             throw $e;
         }
+    }
+
+    /**
+     * Appelé par la file d'attente si le job échoue hors de handle()
+     * (dépassement du délai, worker arrêté) : le suivi ne reste pas « en cours ».
+     */
+    public function failed(?\Throwable $exception): void
+    {
+        $import = $this->importId ? IsoImport::find($this->importId) : null;
+
+        if ($import?->isActive()) {
+            $import->update([
+                'status' => IsoImport::FAILED,
+                'error' => Str::limit($exception?->getMessage() ?: 'Import interrompu.', 500),
+                'finished_at' => now(),
+                'bytes_per_second' => null,
+            ]);
+        }
+    }
+
+    private function trackedImport(): IsoImport
+    {
+        if ($this->import) {
+            return $this->import;
+        }
+
+        $this->import = $this->importId ? IsoImport::find($this->importId) : null;
+
+        if (! $this->import) {
+            $this->import = IsoImport::create([
+                'user_id' => $this->attributes['user_id'],
+                'url' => $this->url,
+                'name' => $this->attributes['name'],
+                'options' => ['attributes' => $this->attributes, 'tags' => $this->tags],
+                'status' => IsoImport::PENDING,
+            ]);
+            $this->importId = $this->import->id;
+        }
+
+        return $this->import;
+    }
+
+    /**
+     * Rappel de progression de Guzzle : met à jour le suivi au plus une fois
+     * par seconde et interrompt le transfert si l'import a été annulé.
+     */
+    private function onProgress(int $downloadTotal, int $downloaded): void
+    {
+        $now = microtime(true);
+        if ($now - $this->lastProgressAt < self::PROGRESS_INTERVAL) {
+            return;
+        }
+        $this->lastProgressAt = $now;
+
+        $import = $this->trackedImport();
+
+        if (IsoImport::whereKey($import->id)->value('status') === IsoImport::CANCELLED) {
+            throw new ImportCancelledException('Import annulé.');
+        }
+
+        $elapsed = max(1, $now - ($import->started_at?->getTimestamp() ?? $now));
+
+        $import->update([
+            'bytes_downloaded' => $downloaded,
+            'bytes_total' => $downloadTotal > 0 ? $downloadTotal : null,
+            'bytes_per_second' => (int) ($downloaded / $elapsed),
+        ]);
     }
 
     /**
@@ -111,6 +215,7 @@ class ImportIsoFromUrl implements ShouldQueue
                 ->withOptions([
                     'sink' => $destination,
                     'allow_redirects' => false,
+                    'progress' => fn ($downloadTotal, $downloaded) => $this->onProgress((int) $downloadTotal, (int) $downloaded),
                     'curl' => [
                         CURLOPT_RESOLVE => ["{$host}:{$port}:{$ip}"],
                     ],

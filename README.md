@@ -31,7 +31,7 @@ Silo is a web application for teams that need one place to store and distribute 
 
 ### 📦 File management
 - **Resumable chunked uploads** — drag & drop files of any size; interrupted uploads pick up where they left off.
-- **Import from URL** — let the server download an image in the background and get notified when it is done.
+- **Import from URL** — let the server download an image in the background, follow its progress live (speed, ETA), cancel or retry it.
 - **SHA-256 integrity** — checksums are computed in the background, compared with the expected value you provide, and searchable (paste a hash to find the file).
 - **Duplicate detection** — identical files are flagged automatically.
 - **Rich metadata** — version, architecture, OS type, description and colored tags, with search, filters, sorting and bulk actions.
@@ -118,7 +118,7 @@ The seeder prints a randomly generated password (or uses `ADMIN_EMAIL` / `ADMIN_
 
 ## ⚙️ Configuration
 
-Silo is configured through environment variables. The most useful ones:
+The Docker image ships with production defaults (`APP_NAME=Silo`, `APP_ENV=production`, `LOG_CHANNEL=daily`, Redis cache/sessions/queue, MariaDB host `db`…), so your `.env` only needs the secrets above. Any variable can still be overridden. The most useful ones:
 
 | Variable | Default | Description |
 |---|---|---|
@@ -126,7 +126,7 @@ Silo is configured through environment variables. The most useful ones:
 | `APP_LOCALE` | `en` | Default language when the browser preference is not supported. |
 | `TRUSTED_PROXIES` | private networks | Reverse proxies allowed to send `X-Forwarded-*` headers. Use `*` only if Silo is reachable **exclusively** through your proxy. |
 | `SESSION_SECURE_COOKIE` | `true` | Keep enabled when served over HTTPS. |
-| `MAIL_MAILER`, `MAIL_HOST`, … | `log` | SMTP settings, required to send invitations. |
+| `MAIL_MAILER`, `MAIL_HOST`, … | `log` | Fallback SMTP settings. Easier: configure SMTP from **Admin → Settings → Email** (password encrypted, test button). |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | random password | Initial administrator created by the seeder. |
 
 Storage locations (local, NFS, S3, FTP, SFTP) are managed from **Admin → Settings → Storage**, not from the environment. Upload limits are set in [`custom.ini`](custom.ini) (50 GB by default).
