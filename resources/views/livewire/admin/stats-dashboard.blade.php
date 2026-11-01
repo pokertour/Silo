@@ -13,16 +13,15 @@
 <div class="animate-rise">
     <x-ui.page-header :eyebrow="__('app.Administration')" :title="__('app.Vue d\'ensemble')" :subtitle="__('app.Monitorage de l\'infrastructure Silo')">
         <x-slot:actions>
-            <span class="badge badge-ok h-8 px-3 text-[11px]"><span class="relative flex size-2"><span class="absolute inline-flex size-full animate-ping rounded-full bg-ok opacity-60"></span><span class="relative inline-flex size-2 rounded-full bg-ok"></span></span>{{ __('app.Opérationnel') }}</span>
+            <span class="badge badge-ok h-7 px-3 text-xs"><span class="relative flex size-2"><span class="absolute inline-flex size-full animate-ping rounded-full bg-ok opacity-60"></span><span class="relative inline-flex size-2 rounded-full bg-ok"></span></span>{{ __('app.Opérationnel') }}</span>
         </x-slot:actions>
     </x-ui.page-header>
 
-    <section class="card grid grid-cols-2 overflow-hidden lg:grid-cols-4">
-        @foreach ($metrics as $index => $metric)
-            <div @class(['relative p-5 sm:p-6', 'border-r border-line' => $index % 2 === 0, 'lg:border-r' => $index < 3, 'border-b border-line lg:border-b-0' => $index < 2])>
-                <div class="flex items-center justify-between"><span class="spec">{{ $metric['label'] }}</span><i class="{{ $metric['icon'] }} text-lg text-ink-3"></i></div>
-                <p class="mt-4 font-display text-3xl font-semibold tracking-tight text-ink tabular-nums sm:text-4xl">{{ $metric['value'] }}</p>
-                @if ($index === 3)<span class="absolute inset-x-0 bottom-0 h-[3px] bg-accent"></span>@endif
+    <section class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+        @foreach ($metrics as $metric)
+            <div class="card p-4 sm:p-5">
+                <p class="flex items-center gap-1.5 text-[13px] font-medium text-ink-3"><i class="{{ $metric['icon'] }} text-[15px] text-accent-ink"></i>{{ $metric['label'] }}</p>
+                <p class="mt-2.5 font-mono text-[28px] leading-none font-semibold tracking-[-0.035em] text-ink sm:text-[32px]">{{ $metric['value'] }}</p>
             </div>
         @endforeach
     </section>

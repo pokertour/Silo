@@ -55,10 +55,10 @@ Silo est une application web pour les équipes qui ont besoin d'un endroit uniqu
 - **4 langues** : anglais, français, espagnol, allemand — détectées depuis le navigateur.
 
 ### 🎨 Interface
-- **Thèmes clair et sombre**, couleur d'accent au choix et logo personnalisé.
+- **Thèmes clair et sombre** qui suivent le système, couleur d'accent au choix et logo personnalisé.
 - **Palette de commandes** (<kbd>⌘K</kbd>, <kbd>Ctrl K</kbd> ou <kbd>/</kbd>) pour chercher dans la bibliothèque et aller sur n'importe quelle page.
 - **Interface mobile** avec barre d'onglets, menu latéral et dialogues en bas d'écran.
-- Chaque image est représentée par un disque gravé, coloré selon son système.
+- Design épuré inspiré d'Apple : chaque image est présentée comme un produit, avec son propre CD argenté.
 
 ## 📸 Captures d'écran
 
@@ -70,8 +70,8 @@ Silo est une application web pour les équipes qui ont besoin d'un endroit uniqu
 | **Upload** — morceaux reprenables ou import depuis une URL | **Page de partage** — ce que voient vos destinataires |
 | ![Palette de commandes](docs/screenshots/command-palette.jpg) | ![Administration](docs/screenshots/admin-stats.jpg) |
 | **Palette de commandes** — <kbd>⌘K</kbd> / <kbd>/</kbd> pour aller partout | **Administration** — stockages, répartition par OS, activité |
-| ![Thème clair](docs/screenshots/dashboard-light.jpg) | ![Dialogue de confirmation](docs/screenshots/confirm-dialog.jpg) |
-| **Thème clair** — ou sombre, au choix | **Aucune popup du navigateur** — dialogues maison partout |
+| ![Thème sombre](docs/screenshots/dashboard-dark.jpg) | ![Dialogue de confirmation](docs/screenshots/confirm-dialog.jpg) |
+| **Thème sombre** — suit le réglage du système | **Aucune popup du navigateur** — dialogues maison partout |
 
 <p align="center"><img src="docs/screenshots/mobile.jpg" alt="Silo sur mobile" width="90%"><br><sub>Une vraie interface mobile : barre d'onglets, menu latéral et dialogues en bas d'écran.</sub></p>
 

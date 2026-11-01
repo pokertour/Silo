@@ -55,10 +55,10 @@ Silo is a web application for teams that need one place to store and distribute 
 - **4 languages**: English, French, Spanish, German — detected from the browser.
 
 ### 🎨 Interface
-- **Light & dark themes**, an accent color you choose and your own logo.
+- **Light & dark themes** that follow your system, an accent color you choose and your own logo.
 - **Command palette** (<kbd>⌘K</kbd>, <kbd>Ctrl K</kbd> or <kbd>/</kbd>) to search the library and jump to any page.
 - **Mobile-first layout** with a tab bar, a slide-in menu and bottom-sheet dialogs.
-- Every image gets an engraved disc colored by operating system.
+- Clean, Apple-inspired design: every image is presented like a product, with its own silver disc.
 
 ## 📸 Screenshots
 
@@ -70,8 +70,8 @@ Silo is a web application for teams that need one place to store and distribute 
 | **Upload** — resumable chunks or import from URL | **Share page** — what your recipients see |
 | ![Command palette](docs/screenshots/command-palette.jpg) | ![Administration](docs/screenshots/admin-stats.jpg) |
 | **Command palette** — <kbd>⌘K</kbd> / <kbd>/</kbd> to jump anywhere | **Administration** — storage, OS distribution, activity |
-| ![Light theme](docs/screenshots/dashboard-light.jpg) | ![Confirmation dialog](docs/screenshots/confirm-dialog.jpg) |
-| **Light theme** — or dark, your call | **No browser popups** — custom dialogs everywhere |
+| ![Dark theme](docs/screenshots/dashboard-dark.jpg) | ![Confirmation dialog](docs/screenshots/confirm-dialog.jpg) |
+| **Dark theme** — follows your system | **No browser popups** — custom dialogs everywhere |
 
 <p align="center"><img src="docs/screenshots/mobile.jpg" alt="Silo on mobile" width="90%"><br><sub>A real mobile layout: tab bar, slide-in menu and bottom sheets.</sub></p>
 
