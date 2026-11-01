@@ -11,6 +11,8 @@ use App\Models\Tag;
 use App\Models\User;
 use App\Notifications\IsoImportFinished;
 use App\Notifications\ShareLinkDownloaded;
+use App\Support\LdapSettings;
+use App\Support\OidcSettings;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
@@ -187,6 +189,24 @@ class DemoSeeder extends Seeder
             'started_at' => $now->copy()->subMinutes(40),
             'finished_at' => $now->copy()->subMinutes(39),
         ]);
+
+        // Authentification externe de démonstration (bouton SSO sur la page de connexion)
+        OidcSettings::save([
+            'enabled' => true,
+            'label' => 'Keycloak',
+            'issuer' => 'https://auth.silo.demo/realms/main',
+            'client_id' => 'silo',
+            'allowed_domains' => 'silo.demo',
+            'admin_claim' => 'groups',
+            'admin_value' => 'silo-admins',
+        ], ['client_secret' => 'demo-secret']);
+        LdapSettings::save([
+            'enabled' => true,
+            'host' => 'ldap.silo.demo',
+            'base_dn' => 'ou=people,dc=silo,dc=demo',
+            'bind_dn' => 'cn=silo,ou=services,dc=silo,dc=demo',
+            'admin_group' => 'cn=silo-admins,ou=groups,dc=silo,dc=demo',
+        ], ['bind_password' => 'demo-secret']);
 
         // Jeton utilisé par le script de captures pour la page publique de partage
         file_put_contents(storage_path('app/demo-share-token'), $publicShareToken);

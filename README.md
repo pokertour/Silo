@@ -46,6 +46,7 @@ Silo is a web application for teams that need one place to store and distribute 
 - **Invitation-only registration** (single-use, expiring invitations sent by email).
 - **Groups**: files are either visible to every user or restricted to a group's members.
 - **Roles**: administrators manage everything; users manage their own files.
+- **Single sign-on** with OpenID Connect / OAuth 2 (Keycloak, Authentik, Entra ID, Google, Okta, GitLab, GitHub…) and **LDAP / Active Directory** sign-in, with optional account provisioning and admin-group mapping.
 - **Two-factor authentication** (TOTP) with recovery codes.
 
 ### 🛠️ Administration
@@ -72,6 +73,8 @@ Silo is a web application for teams that need one place to store and distribute 
 | **Command palette** — <kbd>⌘K</kbd> / <kbd>/</kbd> to jump anywhere | **Administration** — storage, OS distribution, activity |
 | ![Dark theme](docs/screenshots/dashboard-dark.jpg) | ![Confirmation dialog](docs/screenshots/confirm-dialog.jpg) |
 | **Dark theme** — follows your system | **No browser popups** — custom dialogs everywhere |
+| ![Single sign-on](docs/screenshots/login.jpg) | ![Authentication settings](docs/screenshots/admin-auth.jpg) |
+| **Single sign-on** — OpenID Connect, OAuth 2 or LDAP | **Authentication** — IdP and directory settings |
 
 <p align="center"><img src="docs/screenshots/mobile.jpg" alt="Silo on mobile" width="90%"><br><sub>A real mobile layout: tab bar, slide-in menu and bottom sheets.</sub></p>
 
@@ -130,6 +133,16 @@ The Docker image ships with production defaults (`APP_NAME=Silo`, `APP_ENV=produ
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | random password | Initial administrator created by the seeder. |
 
 Storage locations (local, NFS, S3, FTP, SFTP) are managed from **Admin → Settings → Storage**, not from the environment. Upload limits are set in [`custom.ini`](custom.ini) (50 GB by default).
+
+### Single sign-on and LDAP
+
+Both are configured from **Admin → Settings → Authentication**; local accounts keep working.
+
+- **OpenID Connect / OAuth 2** — enter the issuer URL (endpoints are discovered from `/.well-known/openid-configuration`), the client ID and secret, and register the redirect URL shown on the page (`https://<your-host>/auth/sso/callback`) with your provider. The flow uses PKCE, `state` and `nonce`. For plain OAuth 2 providers such as GitHub, fill in the authorization, token and userinfo URLs instead.
+- **LDAP / Active Directory** — server, encryption (STARTTLS or LDAPS), base DN, an optional service account and a user filter where `{login}` is replaced by the username typed on the sign-in page.
+- **Accounts** — by default only existing users (matched by email address) can sign in; enable *Create accounts automatically* to provision them on first sign-in. Map an IdP group claim or an LDAP group (`memberOf`) to the admin role if you wish. Silo's own 2FA is still required for users who enabled it.
+
+Secrets (client secret, bind password) are encrypted with `APP_KEY`.
 
 ## 🔐 Security
 

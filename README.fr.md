@@ -46,6 +46,7 @@ Silo est une application web pour les équipes qui ont besoin d'un endroit uniqu
 - **Inscription sur invitation uniquement** (invitations à usage unique et à durée limitée, envoyées par email).
 - **Groupes** : un fichier est soit visible par tous les utilisateurs, soit réservé aux membres d'un groupe.
 - **Rôles** : les administrateurs gèrent tout, les utilisateurs gèrent leurs propres fichiers.
+- **Authentification unique** OpenID Connect / OAuth 2 (Keycloak, Authentik, Entra ID, Google, Okta, GitLab, GitHub…) et **connexion LDAP / Active Directory**, avec création des comptes et rôle admin par groupe en option.
 - **Double authentification** (TOTP) avec codes de récupération.
 
 ### 🛠️ Administration
@@ -72,6 +73,8 @@ Silo est une application web pour les équipes qui ont besoin d'un endroit uniqu
 | **Palette de commandes** — <kbd>⌘K</kbd> / <kbd>/</kbd> pour aller partout | **Administration** — stockages, répartition par OS, activité |
 | ![Thème sombre](docs/screenshots/dashboard-dark.jpg) | ![Dialogue de confirmation](docs/screenshots/confirm-dialog.jpg) |
 | **Thème sombre** — suit le réglage du système | **Aucune popup du navigateur** — dialogues maison partout |
+| ![Authentification unique](docs/screenshots/login.jpg) | ![Réglages d'authentification](docs/screenshots/admin-auth.jpg) |
+| **Authentification unique** — OpenID Connect, OAuth 2 ou LDAP | **Authentification** — fournisseur d'identité et annuaire |
 
 <p align="center"><img src="docs/screenshots/mobile.jpg" alt="Silo sur mobile" width="90%"><br><sub>Une vraie interface mobile : barre d'onglets, menu latéral et dialogues en bas d'écran.</sub></p>
 
@@ -130,6 +133,16 @@ L'image Docker embarque des valeurs par défaut de production (`APP_NAME=Silo`, 
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | mot de passe aléatoire | Administrateur initial créé par le seeder. |
 
 Les emplacements de stockage (local, NFS, S3, FTP, SFTP) se gèrent depuis **Admin → Paramètres → Stockage**, pas via l'environnement. Les limites d'upload sont définies dans [`custom.ini`](custom.ini) (50 Go par défaut).
+
+### Authentification unique et LDAP
+
+Les deux se configurent dans **Admin → Paramètres → Authentification** ; les comptes locaux continuent de fonctionner.
+
+- **OpenID Connect / OAuth 2** — saisissez l'URL de l'émetteur (les points de terminaison sont découverts via `/.well-known/openid-configuration`), le client ID et le secret, puis déclarez chez votre fournisseur l'URL de redirection affichée (`https://<votre-hôte>/auth/sso/callback`). Le flux utilise PKCE, `state` et `nonce`. Pour un fournisseur OAuth 2 simple comme GitHub, renseignez plutôt les URL d'autorisation, de jeton et userinfo.
+- **LDAP / Active Directory** — serveur, chiffrement (STARTTLS ou LDAPS), base DN, compte de service optionnel et filtre utilisateur où `{login}` est remplacé par l'identifiant saisi.
+- **Comptes** — par défaut, seuls les utilisateurs existants (même adresse e-mail) peuvent se connecter ; activez *Créer automatiquement les comptes* pour les créer à la première connexion. Un claim de groupe ou un groupe LDAP (`memberOf`) peut donner le rôle admin. La 2FA de Silo reste exigée pour les utilisateurs qui l'ont activée.
+
+Les secrets (client secret, mot de passe du compte de service) sont chiffrés avec `APP_KEY`.
 
 ## 🔐 Sécurité
 

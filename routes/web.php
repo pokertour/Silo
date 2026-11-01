@@ -3,6 +3,7 @@
 use App\Http\Controllers\ChunkUploadController;
 use App\Http\Controllers\IsoDownloadController;
 use App\Http\Controllers\ShareController;
+use App\Http\Controllers\SsoController;
 use App\Livewire\Admin\Groups;
 use App\Livewire\Admin\Invitations;
 use App\Livewire\Admin\Settings;
@@ -52,6 +53,10 @@ Route::get('/s/{token}/download', [ShareController::class, 'download'])
 Route::middleware('guest')->group(function () {
     Route::get('/login', Login::class)->name('login');
     Route::get('/register', Register::class)->name('register');
+
+    // Authentification unique OpenID Connect / OAuth 2
+    Route::get('/auth/sso/redirect', [SsoController::class, 'redirect'])->name('sso.redirect')->middleware('throttle:20,1');
+    Route::get('/auth/sso/callback', [SsoController::class, 'callback'])->name('sso.callback')->middleware('throttle:20,1');
 });
 
 // auth.session : invalide les autres sessions quand le mot de passe change

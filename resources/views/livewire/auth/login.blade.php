@@ -14,11 +14,26 @@
 
         </div>
 
-        <form wire:submit="login" class="mt-7 space-y-5">
+        @if (session('sso_error'))
+            <div class="mt-6 flex gap-2.5 rounded-xl bg-danger/10 px-3.5 py-3 text-sm text-danger" role="alert">
+                <i class="ri-error-warning-line mt-px"></i><span>{{ session('sso_error') }}</span>
+            </div>
+        @endif
+
+        @if ($ssoEnabled && ! $requiresTwoFactor)
+            <a href="{{ route('sso.redirect') }}" class="btn btn-secondary btn-lg mt-7 w-full">
+                <i class="ri-shield-keyhole-line"></i>{{ __('app.Continuer avec :provider', ['provider' => $ssoLabel]) }}
+            </a>
+            <div class="mt-6 flex items-center gap-3 text-xs text-ink-3" aria-hidden="true">
+                <span class="h-px flex-1 bg-line"></span>{{ __('app.ou') }}<span class="h-px flex-1 bg-line"></span>
+            </div>
+        @endif
+
+        <form wire:submit="login" @class(['space-y-5', 'mt-7' => ! $ssoEnabled || $requiresTwoFactor, 'mt-5' => $ssoEnabled && ! $requiresTwoFactor])>
             @if (! $requiresTwoFactor)
                 <div>
-                    <label for="email" class="label">{{ __('app.Email') }}</label>
-                    <input wire:model="email" type="email" id="email" autocomplete="username" autofocus class="input" placeholder="{{ __('app.votre@email.com') }}">
+                    <label for="email" class="label">{{ $ldapEnabled ? __('app.E-mail ou identifiant') : __('app.Email') }}</label>
+                    <input wire:model="email" type="{{ $ldapEnabled ? 'text' : 'email' }}" id="email" autocomplete="username" autocapitalize="none" autofocus class="input" placeholder="{{ $ldapEnabled ? __('app.prenom.nom') : __('app.votre@email.com') }}">
                     @error('email') <p class="field-error"><i class="ri-error-warning-line"></i>{{ $message }}</p> @enderror
                 </div>
                 <div x-data="{ show: false }">

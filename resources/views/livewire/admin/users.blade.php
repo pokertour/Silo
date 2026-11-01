@@ -44,6 +44,9 @@
                                 @else
                                     <span class="badge">{{ __('app.Membre') }}</span>
                                 @endif
+                                @if ($user->auth_provider)
+                                    <span class="badge badge-info ml-1" title="{{ __('app.Compte créé par') }} {{ $user->auth_provider === 'ldap' ? 'LDAP' : 'SSO' }}">{{ $user->auth_provider === 'ldap' ? 'LDAP' : 'SSO' }}</span>
+                                @endif
                             </td>
                             <td>
                                 @if ($isOnline)

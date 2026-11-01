@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Silo — The self-hosted vault for disk images</title>
-    <meta name="description" content="Silo is a self-hosted web app to upload, organize and share disk images (ISO, QCOW2, VMDK, IMG…) with groups, expiring share links and two-factor authentication.">
+    <meta name="description" content="Silo is a self-hosted web app to upload, organize and share disk images (ISO, QCOW2, VMDK, IMG…) with groups, expiring share links, single sign-on (OpenID Connect, LDAP) and two-factor authentication.">
     <meta name="theme-color" content="#ffffff">
     <meta property="og:title" content="Silo — The self-hosted vault for disk images">
-    <meta property="og:description" content="Upload, organize and share ISOs, VM disks and large archives. Resumable uploads, SHA-256 integrity, groups, secure share links, 2FA.">
+    <meta property="og:description" content="Upload, organize and share ISOs, VM disks and large archives. Resumable uploads, SHA-256 integrity, groups, secure share links, SSO &amp; LDAP, 2FA.">
     <meta property="og:image" content="screenshots/dashboard.jpg">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
@@ -89,8 +89,8 @@
                 </article>
                 <article class="tile">
                     <span class="num">04 · Access</span>
-                    <h3>Groups &amp; roles</h3>
-                    <p>Public or group-restricted files, invitation-only sign-up and two-factor authentication.</p>
+                    <h3>SSO, LDAP &amp; roles</h3>
+                    <p>Sign in with OpenID Connect or your LDAP / Active Directory. Groups, invitation-only sign-up and 2FA.</p>
                 </article>
                 <article class="tile">
                     <span class="num">05 · Storage</span>
@@ -188,6 +188,18 @@
                 <figure class="shot" data-lightbox><img src="screenshots/admin-stats.jpg" alt="Administration overview" loading="lazy" width="1440" height="900"></figure>
             </div>
 
+            <div class="showcase">
+                <div class="showcase-text">
+                    <span class="eyebrow">Single sign-on</span>
+                    <h3>Your identity provider. Your directory.</h3>
+                    <p>Connect Keycloak, Authentik, Microsoft Entra ID, Google, Okta or GitLab with OpenID Connect — or any OAuth 2 provider such as GitHub. Prefer passwords? Plug in LDAP or Active Directory. Accounts can be created on first sign-in and an IdP or directory group can grant the admin role. Local accounts and Silo's 2FA keep working.</p>
+                </div>
+                <div class="duo">
+                    <figure class="shot" data-lightbox><img src="screenshots/login.jpg" alt="Sign-in page with the single sign-on button" loading="lazy" width="1440" height="900"></figure>
+                    <figure class="shot" data-lightbox><img src="screenshots/admin-auth.jpg" alt="Authentication settings: OpenID Connect and LDAP" loading="lazy" width="1440" height="900"></figure>
+                </div>
+            </div>
+
             <div class="section-head" style="margin-top:1rem">
                 <span class="eyebrow">More screens</span>
                 <h2>Light or dark. It follows your system.</h2>
@@ -201,9 +213,10 @@
                 <figure class="shot" data-lightbox><img src="screenshots/admin-users.jpg" alt="Users" loading="lazy" width="1440" height="900"><figcaption>Members &amp; roles <span>Admin</span></figcaption></figure>
                 <figure class="shot" data-lightbox><img src="screenshots/admin-groups.jpg" alt="Groups" loading="lazy" width="1440" height="900"><figcaption>Groups <span>Admin</span></figcaption></figure>
                 <figure class="shot" data-lightbox><img src="screenshots/admin-invitations.jpg" alt="Invitations" loading="lazy" width="1440" height="900"><figcaption>Invitations <span>Admin</span></figcaption></figure>
+                <figure class="shot" data-lightbox><img src="screenshots/admin-mail.jpg" alt="Email (SMTP) settings" loading="lazy" width="1440" height="900"><figcaption>Email settings <span>Admin</span></figcaption></figure>
+                <figure class="shot" data-lightbox><img src="screenshots/admin-about.jpg" alt="About Silo" loading="lazy" width="1440" height="900"><figcaption>About <span>Admin</span></figcaption></figure>
                 <figure class="shot" data-lightbox><img src="screenshots/admin-audit.jpg" alt="Audit log" loading="lazy" width="1440" height="900"><figcaption>Audit log <span>Admin</span></figcaption></figure>
                 <figure class="shot" data-lightbox><img src="screenshots/profile.jpg" alt="Profile and two-factor authentication" loading="lazy" width="1440" height="900"><figcaption>Profile &amp; 2FA <span>Account</span></figcaption></figure>
-                <figure class="shot" data-lightbox><img src="screenshots/login.jpg" alt="Sign-in page" loading="lazy" width="1440" height="900"><figcaption>Sign in <span>Public</span></figcaption></figure>
             </div>
 
             <div class="mobile-row">
