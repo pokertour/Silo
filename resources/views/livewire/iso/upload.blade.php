@@ -75,7 +75,7 @@
                 </div>
                 <p class="font-display text-4xl font-semibold tabular-nums text-ink" x-text="progress + '%'"></p>
                 <p class="mt-2 max-w-xs truncate font-mono text-sm text-ink-2" x-text="selectedFile"></p>
-                <p class="mt-4 text-xs text-ink-3"><i class="ri-information-line"></i> {{ __('(Ne fermez pas cette page)') }}</p>
+                <p class="mt-4 text-xs text-ink-3"><i class="ri-information-line"></i> {{ __('app.(Ne fermez pas cette page)') }}</p>
             </div>
 
             {{-- Terminé --}}
@@ -83,7 +83,7 @@
                 <span class="mb-5 grid size-16 place-items-center rounded-full bg-ok/15 text-3xl text-ok"><i class="ri-check-line"></i></span>
                 <p class="font-display text-lg font-semibold text-ink">{{ __('app.Fichier prêt') }}</p>
                 <p class="mt-1 max-w-xs truncate font-mono text-sm text-ink-2" x-text="selectedFile || @js($originalFileName)"></p>
-                <p class="mt-3 text-sm text-ink-2">{{ __('Fichier transféré avec succès. Vous pouvez maintenant enregistrer.') }}</p>
+                <p class="mt-3 text-sm text-ink-2">{{ __('app.Fichier transféré avec succès. Vous pouvez maintenant enregistrer.') }}</p>
             </div>
         </section>
 
@@ -94,7 +94,7 @@
             <div class="grid gap-4 sm:grid-cols-2">
                 <div class="sm:col-span-2">
                     <label class="label" for="name">{{ __('app.Nom / Titre *') }}</label>
-                    <input id="name" wire:model="name" type="text" class="input" placeholder="{{ __('ex: Ubuntu 24.04 LTS Server') }}" required>
+                    <input id="name" wire:model="name" type="text" class="input" placeholder="{{ __('app.ex: Ubuntu 24.04 LTS Server') }}" required>
                     @error('name') <p class="field-error"><i class="ri-error-warning-line"></i>{{ $message }}</p> @enderror
                 </div>
                 <div>
@@ -109,7 +109,7 @@
                 </div>
                 <div>
                     <label class="label" for="version">{{ __('app.Version') }}</label>
-                    <input id="version" wire:model="version" type="text" class="input input-mono" placeholder="{{ __('ex: 24.04') }}">
+                    <input id="version" wire:model="version" type="text" class="input input-mono" placeholder="{{ __('app.ex: 24.04') }}">
                     @error('version') <p class="field-error">{{ $message }}</p> @enderror
                 </div>
                 <div>
@@ -118,7 +118,7 @@
                 </div>
                 <div class="sm:col-span-2">
                     <label class="label" for="description">{{ __('app.Description') }}</label>
-                    <textarea id="description" wire:model="description" rows="3" class="input" placeholder="{{ __('Notes ou instructions supplémentaires...') }}"></textarea>
+                    <textarea id="description" wire:model="description" rows="3" class="input" placeholder="{{ __('app.Notes ou instructions supplémentaires...') }}"></textarea>
                     @error('description') <p class="field-error">{{ $message }}</p> @enderror
                 </div>
                 <div class="sm:col-span-2">

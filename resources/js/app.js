@@ -148,7 +148,8 @@ document.addEventListener('alpine:init', () => {
             this.open = true;
             this.query = '';
             this.active = 0;
-            this.$nextTick(() => this.$refs.input?.focus());
+            // Après l'activation du piège à focus (x-trap)
+            setTimeout(() => this.$refs.input?.focus(), 60);
         },
 
         move(delta) {

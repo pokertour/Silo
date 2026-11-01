@@ -16,12 +16,12 @@
             <form wire:submit="create" class="space-y-4">
                 <div>
                     <label class="label" for="group-name">{{ __('app.Nom du groupe') }}</label>
-                    <input wire:model="name" id="group-name" type="text" class="input" placeholder="{{ __('ex: Developpeurs') }}">
+                    <input wire:model="name" id="group-name" type="text" class="input" placeholder="{{ __('app.ex: Developpeurs') }}">
                     @error('name') <p class="field-error">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label class="label" for="group-description">{{ __('app.Description') }}</label>
-                    <textarea wire:model="description" id="group-description" rows="2" class="input" placeholder="{{ __('Accès aux ISO liés au développement') }}"></textarea>
+                    <textarea wire:model="description" id="group-description" rows="2" class="input" placeholder="{{ __('app.Accès aux ISO liés au développement') }}"></textarea>
                     @error('description') <p class="field-error">{{ $message }}</p> @enderror
                 </div>
                 <button type="submit" class="btn btn-primary w-full"><i class="ri-add-line"></i>{{ __('app.Créer') }}</button>

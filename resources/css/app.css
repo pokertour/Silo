@@ -331,7 +331,7 @@
 
     /* Navigation */
     .nav-item {
-        @apply relative flex h-10 items-center gap-3 rounded-xl px-3 text-sm font-medium text-ink-2 transition hover:bg-surface-2 hover:text-ink;
+        @apply relative flex h-9 items-center gap-3 rounded-xl px-3 text-sm font-medium text-ink-2 transition hover:bg-surface-2 hover:text-ink;
     }
 
     .nav-item i {
@@ -349,7 +349,7 @@
 
     .nav-item.is-active::before {
         content: "";
-        @apply absolute top-2.5 bottom-2.5 -left-3 w-[3px] rounded-r-full bg-accent;
+        @apply absolute top-2 bottom-2 -left-3 w-[3px] rounded-r-full bg-accent;
     }
 
     /* Tableaux */

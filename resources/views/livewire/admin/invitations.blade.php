@@ -32,7 +32,7 @@
     </div>
 
     @if ($invitations->isEmpty())
-        <x-ui.empty icon="ri-mail-open-line" :title="__('app.Aucune invitation.')" :text="__('Générez un nouveau jeton pour permettre à un utilisateur de créer un compte.')" />
+        <x-ui.empty icon="ri-mail-open-line" :title="__('app.Aucune invitation.')" :text="__('app.Générez un nouveau jeton pour permettre à un utilisateur de créer un compte.')" />
     @else
         <div class="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
             @foreach ($invitations as $invitation)

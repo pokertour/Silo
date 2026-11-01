@@ -16,15 +16,16 @@
                class="absolute inset-y-0 left-0 flex w-[86%] max-w-[320px] flex-col border-r border-line bg-bg-2">
             <div class="flex h-14 items-center justify-between px-4">
                 <x-ui.logo :size="26" />
-                <button type="button" class="icon-btn" @click="drawer = false" aria-label="{{ __('app.Fermer') }}"><i class="ri-close-line"></i></button>
+<div class="flex items-center gap-1">
+                    <button type="button" class="icon-btn" @click="$store.theme.toggle()" :title="$store.theme.current === 'light' ? @js(__('app.Thème sombre')) : @js(__('app.Thème clair'))" aria-label="{{ __('app.Changer de thème') }}">
+            <i :class="$store.theme.current === 'light' ? 'ri-moon-clear-line' : 'ri-sun-line'"></i>
+        </button>
+                    <button type="button" class="icon-btn" @click="drawer = false" aria-label="{{ __('app.Fermer') }}"><i class="ri-close-line"></i></button>
+                </div>
             </div>
             <div class="flex-1 overflow-y-auto px-4 py-4"><x-nav-links /></div>
             <div class="space-y-3 border-t border-line p-4" style="padding-bottom: calc(1rem + env(safe-area-inset-bottom))">
                 <x-user-card />
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="nav-item w-full text-ink-3"><i class="ri-logout-box-r-line"></i>{{ __('app.Déconnexion') }}</button>
-                </form>
             </div>
         </aside>
     </div>

@@ -3,7 +3,7 @@
     $sections = \App\Support\Navigation::sections(auth()->user());
     $titles = ['workspace' => __('app.Espace de travail'), 'admin' => __('app.Administration')];
 @endphp
-<nav class="space-y-6" aria-label="{{ __('app.Navigation') }}">
+<nav class="space-y-5" aria-label="{{ __('app.Navigation') }}">
     @foreach ($sections as $key => $entries)
         <div>
             <p class="spec mb-2 px-3">{{ $titles[$key] }}</p>

@@ -133,7 +133,8 @@ await capture('command-palette', async () => {
     await page.goto(`${BASE_URL}/dashboard`);
     await settle(page);
     await page.keyboard.press('Control+k');
-    await page.keyboard.type('ubu');
+    await page.waitForTimeout(300);
+    await page.locator('input[placeholder*="jump"]').fill('ubu');
     await page.waitForTimeout(500);
     await shoot(page, 'command-palette');
     await page.keyboard.press('Escape');
@@ -151,7 +152,8 @@ await capture('confirm-dialog', async () => {
     await page.goto(`${BASE_URL}/isos`);
     await settle(page);
     await page.locator('label:has(input[type="checkbox"][wire\\:model\\.live="selected"])').first().click();
-    await page.waitForTimeout(800);
+    await page.waitForTimeout(1200);
+    await shoot(page, 'library-selected');
     await page.getByRole('button', { name: /^delete$/i }).last().click();
     await page.waitForTimeout(600);
     await shoot(page, 'confirm-dialog');

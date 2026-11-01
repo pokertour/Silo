@@ -3,7 +3,7 @@
 <head>
     <x-ui.head :title="$title ?? null" />
 </head>
-<body class="min-h-dvh">
+<body x-data class="min-h-dvh">
     <div class="pointer-events-none fixed inset-0 -z-10 backdrop-dots [mask-image:linear-gradient(to_bottom,black,transparent_75%)]" aria-hidden="true"></div>
     <div class="halo pointer-events-none fixed inset-0 -z-10" aria-hidden="true"></div>
 
