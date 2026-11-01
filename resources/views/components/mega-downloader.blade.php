@@ -3,7 +3,7 @@
      x-show="downloading" x-cloak
      x-transition:enter="transition duration-300 ease-out" x-transition:enter-start="translate-y-4 opacity-0"
      x-transition:leave="transition duration-200 ease-in" x-transition:leave-end="translate-y-4 opacity-0"
-     class="fixed inset-x-3 bottom-24 z-[85] sm:inset-x-auto sm:bottom-5 sm:left-5 lg:left-[284px] sm:w-[380px]">
+     class="fixed inset-x-3 bottom-24 z-[85] sm:inset-x-auto sm:bottom-5 sm:left-5 lg:left-[270px] sm:w-[380px]">
     <div class="overflow-hidden rounded-2xl border border-line-strong bg-elevated/95 shadow-2xl backdrop-blur-xl">
         <div class="flex items-center gap-3 p-4">
             <x-ui.disc size="sm" class="animate-spin-slow" />

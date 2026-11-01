@@ -18,7 +18,7 @@
     <section class="card relative overflow-hidden p-6 sm:p-8">
         <div class="pointer-events-none absolute inset-0 backdrop-dots opacity-60 [mask-image:linear-gradient(to_left,black,transparent_60%)]"></div>
         <div class="relative flex flex-col gap-6 md:flex-row md:items-center">
-            <x-ui.disc :file="$isoFile" size="xl" class="group shrink-0 self-start transition-transform duration-[2s] hover:rotate-[270deg] md:self-center" />
+            <div class="art group size-[172px] shrink-0 self-start md:self-center"><x-ui.disc :file="$isoFile" :ext="false" size="xl" class="transition-transform duration-[2s] group-hover:rotate-[200deg]" /><span class="absolute right-3 bottom-2.5 text-[11px] font-semibold tracking-wide text-ink-3 uppercase">{{ $extension }}</span></div>
             <div class="min-w-0 flex-1">
                 <p class="eyebrow mb-2">{{ collect([$isoFile->os_type, $isoFile->architecture])->filter()->implode(' · ') ?: __('app.Image disque') }}</p>
                 <h1 class="text-balance font-display text-3xl font-semibold tracking-tight text-ink sm:text-[2.6rem] sm:leading-[1.05]">{{ $isoFile->name }}</h1>
@@ -121,7 +121,7 @@
                     </div>
                 </div>
                 @if ($isoFile->checksum)
-                    <div class="grid grid-cols-4 gap-x-3 gap-y-1.5 rounded-xl border border-line bg-bg-2 p-4 font-mono text-[13px] tracking-wide text-ink sm:grid-cols-8">
+                    <div class="grid grid-cols-4 gap-x-3 gap-y-1.5 rounded-xl border border-line bg-bg-2 p-4 font-code text-[13px] tracking-wide text-ink sm:grid-cols-8">
                         @foreach (str_split($isoFile->checksum, 8) as $chunk)
                             <span class="{{ $loop->index % 2 ? 'text-ink-2' : 'text-ink' }}">{{ $chunk }}</span>
                         @endforeach
@@ -145,7 +145,7 @@
                             <div class="min-w-0 flex-1">
                                 <div class="flex items-center gap-2">
                                     <span @class(['size-2 shrink-0 rounded-full', 'bg-ok' => $link->isValid(), 'bg-ink-3' => ! $link->isValid()])></span>
-                                    <code class="truncate font-mono text-[13px] text-ink">{{ route('share.show', $link->token) }}</code>
+                                    <code class="truncate font-code text-[13px] text-ink">{{ route('share.show', $link->token) }}</code>
                                 </div>
                                 <div class="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 pl-4 text-xs text-ink-3">
                                     <span><i class="ri-download-2-line"></i> {{ $link->download_count }}{{ $link->max_downloads ? ' / '.$link->max_downloads : '' }} {{ __('app.téléchargements') }}</span>

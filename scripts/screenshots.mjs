@@ -25,7 +25,7 @@ async function newPage(viewport) {
         locale: 'en-US',
         extraHTTPHeaders: { 'Accept-Language': 'en-US,en;q=0.9' },
         reducedMotion: 'reduce',
-        colorScheme: 'dark',
+        colorScheme: 'light',
     });
     return context.newPage();
 }
@@ -162,15 +162,16 @@ await capture('confirm-dialog', async () => {
     await shoot(page, 'confirm-dialog');
 });
 
-await capture('dashboard-light', async () => {
-    await page.evaluate(() => localStorage.setItem('silo-theme', 'light'));
+await capture('dashboard-dark', async () => {
+    await page.evaluate(() => localStorage.setItem('silo-theme', 'dark'));
     await page.goto(`${BASE_URL}/dashboard`);
     await settle(page);
-    await shoot(page, 'dashboard-light');
+    await shoot(page, 'dashboard-dark');
     await page.goto(`${BASE_URL}/isos`);
     await settle(page);
-    await shoot(page, 'library-light');
-    await page.evaluate(() => localStorage.setItem('silo-theme', 'dark'));
+    await shoot(page, 'library-dark');
+    await page.goto(`${BASE_URL}/isos`);
+    await page.evaluate(() => localStorage.setItem('silo-theme', 'light'));
 });
 
 // --- Mobile -----------------------------------------------------------------

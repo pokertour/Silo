@@ -16,7 +16,7 @@
         <div class="card overflow-hidden">
             <div class="relative flex flex-col items-center px-6 pt-10 pb-8 text-center sm:px-10">
                 <div class="pointer-events-none absolute inset-0 backdrop-dots opacity-70 [mask-image:radial-gradient(circle_at_50%_30%,black,transparent_70%)]"></div>
-                <x-ui.disc :file="$file" size="xl" class="relative animate-spin-slow" />
+                <div class="art size-[176px]"><x-ui.disc :file="$file" :ext="false" size="xl" /><span class="absolute right-3 bottom-2.5 text-[11px] font-semibold tracking-wide text-ink-3 uppercase">{{ $extension }}</span></div>
                 <p class="eyebrow relative mt-7">{{ __('app.Fichier partagé avec vous') }}</p>
                 <h1 class="relative mt-2 text-balance font-display text-3xl font-semibold tracking-tight text-ink">{{ $file->name }}</h1>
                 <p class="relative mt-3 flex flex-wrap justify-center gap-1.5">
@@ -38,7 +38,7 @@
                             <i :class="copied ? 'ri-check-line text-ok' : 'ri-file-copy-line'"></i><span x-text="copied ? @js(__('app.Copié !')) : @js(__('app.Copier'))"></span>
                         </button>
                     </div>
-                    <code class="block font-mono text-[12.5px] leading-relaxed break-all text-ink-2 select-all">{{ $file->checksum }}</code>
+                    <code class="block font-code text-[12.5px] leading-relaxed break-all text-ink-2 select-all">{{ $file->checksum }}</code>
                 </div>
             @endif
 

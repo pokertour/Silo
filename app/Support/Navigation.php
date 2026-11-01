@@ -18,8 +18,8 @@ class Navigation
     {
         $sections = [
             'workspace' => [
-                ['label' => __('app.Tableau de Bord'), 'route' => 'dashboard', 'icon' => 'ri-dashboard-3-line', 'active' => 'dashboard'],
-                ['label' => __('app.Bibliothèque'), 'route' => 'isos', 'icon' => 'ri-album-line', 'active' => 'isos*'],
+                ['label' => __('app.Tableau de Bord'), 'route' => 'dashboard', 'icon' => 'ri-home-5-line', 'active' => 'dashboard'],
+                ['label' => __('app.Bibliothèque'), 'route' => 'isos', 'icon' => 'ri-disc-line', 'active' => 'isos*'],
                 ['label' => __('app.Téléverser'), 'route' => 'upload', 'icon' => 'ri-upload-cloud-2-line', 'active' => 'upload'],
                 ['label' => __('app.Mes Partages'), 'route' => 'share-links', 'icon' => 'ri-links-line', 'active' => 'share-links'],
             ],

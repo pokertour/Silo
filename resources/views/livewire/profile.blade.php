@@ -305,7 +305,7 @@ $revealRecoveryCodes = function () {
                         <p class="text-sm text-ink-2">{{ __('app.Conservez ces codes de récupération dans un endroit sûr. Ils vous permettront d\'accéder à votre compte si vous perdez votre appareil.') }}</p>
                         @if ($showRecoveryCodes)
                             <div x-data="copyable(@js(implode("\n", json_decode(decrypt($user->two_factor_recovery_codes), true))))" class="mt-4 rounded-2xl border border-line bg-bg-2 p-4">
-                                <div class="grid grid-cols-2 gap-x-6 gap-y-2 font-mono text-sm text-ink sm:grid-cols-4">
+                                <div class="grid grid-cols-2 gap-x-6 gap-y-2 font-code text-sm text-ink sm:grid-cols-4">
                                     @foreach (json_decode(decrypt($user->two_factor_recovery_codes), true) as $code)
                                         <span>{{ $code }}</span>
                                     @endforeach

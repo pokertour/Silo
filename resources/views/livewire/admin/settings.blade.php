@@ -4,7 +4,7 @@
         'storage' => ['icon' => 'ri-hard-drive-3-line', 'label' => __('app.Stockages Disponibles')],
         'about' => ['icon' => 'ri-information-line', 'label' => __('app.À propos')],
     ];
-    $swatches = ['#c5f82a', '#4cc2ff', '#f6c445', '#ff7a59', '#b58cff', '#34d399', '#6366f1', '#f472b6'];
+    $swatches = ['#0071e3', '#5856d6', '#af52de', '#ff2d55', '#ff3b30', '#ff9500', '#34c759', '#30b0c7', '#8e8e93'];
     $driverOptions = [
         ['value' => 'local', 'label' => 'Local'],
         ['value' => 'nfs', 'label' => 'NFS / Symlink'],
@@ -85,7 +85,7 @@
                             <span class="label">{{ __('app.Aperçu') }}</span>
                             <div class="rounded-2xl border border-line bg-bg-2 p-5" :style="`--accent: ${color}`">
                                 <div class="mb-5 flex items-center gap-2.5"><x-ui.mark :size="28" /><span class="font-display font-bold text-ink">{{ $app_name }}</span></div>
-                                <div class="nav-item is-active mb-1"><i class="ri-album-line"></i>{{ __('app.Bibliothèque') }}</div>
+                                <div class="nav-item is-active mb-1"><i class="ri-disc-line"></i>{{ __('app.Bibliothèque') }}</div>
                                 <div class="nav-item mb-5"><i class="ri-links-line"></i>{{ __('app.Mes Partages') }}</div>
                                 <span class="btn btn-sm w-full" :style="`background: ${color}`"><i class="ri-add-line"></i>{{ __('app.Ajouter une image') }}</span>
                                 <div class="meter mt-5"><span style="width: 62%"></span></div>

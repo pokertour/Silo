@@ -4,14 +4,12 @@
     <x-ui.head :title="$title ?? null" />
 </head>
 <body x-data class="min-h-dvh">
-    <div class="pointer-events-none fixed inset-0 -z-10 backdrop-dots [mask-image:linear-gradient(to_bottom,black,transparent_75%)]" aria-hidden="true"></div>
-    <div class="halo pointer-events-none fixed inset-0 -z-10" aria-hidden="true"></div>
 
     <x-sidebar />
     <x-mobile-nav />
 
-    <main class="relative lg:pl-[264px]">
-        <div class="mx-auto w-full max-w-[1360px] px-4 pt-6 pb-32 sm:px-6 lg:px-10 lg:pt-12 lg:pb-16">
+    <main class="relative lg:pl-[250px]">
+        <div class="mx-auto w-full max-w-[1320px] px-4 pt-6 pb-32 sm:px-6 lg:px-12 lg:pt-11 lg:pb-16">
             {{ $slot }}
         </div>
     </main>

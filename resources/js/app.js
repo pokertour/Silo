@@ -13,6 +13,10 @@ window.Resumable = Resumable;
 
 const THEME_KEY = 'silo-theme';
 
+function preferredTheme() {
+    return localStorage.getItem(THEME_KEY) || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+}
+
 function applyTheme(theme) {
     const root = document.documentElement;
     root.classList.toggle('light', theme === 'light');
@@ -22,14 +26,14 @@ function applyTheme(theme) {
 // Réappliqué après chaque navigation wire:navigate (le <html> est conservé,
 // mais on garde la logique au même endroit que le script anti-flash du layout).
 document.addEventListener('livewire:navigated', () => {
-    applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
+    applyTheme(preferredTheme());
 });
 
 document.addEventListener('alpine:init', () => {
     const Alpine = window.Alpine;
 
     Alpine.store('theme', {
-        current: localStorage.getItem(THEME_KEY) || 'dark',
+        current: preferredTheme(),
         toggle() {
             this.current = this.current === 'light' ? 'dark' : 'light';
             localStorage.setItem(THEME_KEY, this.current);

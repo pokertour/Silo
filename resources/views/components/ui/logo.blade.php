@@ -11,6 +11,6 @@
         <x-ui.mark :size="$size" />
     @endif
     @if ($withName)
-        <span class="font-display text-[19px] font-bold tracking-tight text-ink">{{ $appName }}</span>
+        <span class="text-[17px] font-semibold tracking-tight text-ink">{{ $appName }}</span>
     @endif
 </span>

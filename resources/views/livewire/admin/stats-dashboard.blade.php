@@ -2,7 +2,7 @@
     use Illuminate\Support\Number;
 
     $metrics = [
-        ['label' => __('app.Images disque'), 'value' => $stats['total_isos'], 'icon' => 'ri-album-line'],
+        ['label' => __('app.Images disque'), 'value' => $stats['total_isos'], 'icon' => 'ri-disc-line'],
         ['label' => __('app.Membres'), 'value' => $stats['total_users'], 'icon' => 'ri-user-3-line'],
         ['label' => __('app.Groupes'), 'value' => $stats['total_groups'], 'icon' => 'ri-team-line'],
         ['label' => __('app.Volume total'), 'value' => Number::fileSize($stats['total_size'], precision: 1), 'icon' => 'ri-hard-drive-3-line'],
@@ -54,11 +54,7 @@
                             </div>
                             <p class="font-mono text-sm text-ink">{{ Number::fileSize($usage->total_size, precision: 1) }}</p>
                         </div>
-                        <div class="flex h-2 gap-[2px]" title="{{ number_format($percent, 1) }}%">
-                            @for ($i = 0; $i < 40; $i++)
-                                <span class="flex-1 rounded-[2px] {{ $i < $filled ? $tone : 'bg-surface-2' }}"></span>
-                            @endfor
-                        </div>
+                        <div class="meter h-2" title="{{ number_format($percent, 1) }}%"><span class="{{ $tone }}" style="width: {{ $percent }}%"></span></div>
                         @if ($usage->capacity)
                             <p class="mt-1.5 font-mono text-[11px] text-ink-3">{{ Number::fileSize($usage->free, precision: 1) }} {{ __('app.libres sur') }} {{ Number::fileSize($usage->capacity, precision: 1) }} · {{ number_format($percent, 1) }}% {{ __('app.utilisé') }}</p>
                         @endif

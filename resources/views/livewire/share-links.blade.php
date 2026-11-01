@@ -12,7 +12,7 @@
 
     @if ($links->isEmpty())
         <x-ui.empty icon="ri-links-line" :title="__('app.Aucun lien de partage.')" :text="__('app.Ouvrez une image disque et cliquez sur « Partager » pour créer un lien public.')">
-            <a href="{{ route('isos') }}" wire:navigate class="btn btn-secondary"><i class="ri-album-line"></i>{{ __('app.Parcourir la bibliothèque') }}</a>
+            <a href="{{ route('isos') }}" wire:navigate class="btn btn-secondary"><i class="ri-disc-line"></i>{{ __('app.Parcourir la bibliothèque') }}</a>
         </x-ui.empty>
     @else
         <div class="card overflow-hidden">

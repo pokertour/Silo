@@ -1,9 +1,7 @@
 <div class="relative w-full max-w-[460px] animate-rise">
-    <div class="pointer-events-none absolute -top-20 -left-28 -z-10 opacity-50" aria-hidden="true">
-        <x-ui.disc size="xl" os="bsd" class="animate-spin-slow" />
-    </div>
 
     <div class="card p-7 sm:p-9">
+        <x-ui.mark :size="56" class="mb-6" />
         <p class="eyebrow mb-3">{{ __('app.Invitation') }}</p>
         <h1 class="font-display text-3xl font-semibold text-ink">{{ __('app.Créer un compte') }}</h1>
         <p class="mt-1.5 text-sm text-ink-2">{{ __('app.Vous avez été invité à rejoindre cet espace.') }}</p>

@@ -21,7 +21,7 @@ $activities = computed(function () {
 
 @php
     $tones = ['created' => 'badge-ok', 'updated' => 'badge-info', 'deleted' => 'badge-danger'];
-    $icons = ['IsoFile' => 'ri-album-line', 'User' => 'ri-user-3-line', 'Group' => 'ri-team-line', 'ShareLink' => 'ri-links-line', 'StorageLocation' => 'ri-hard-drive-3-line', 'Invitation' => 'ri-mail-line'];
+    $icons = ['IsoFile' => 'ri-disc-line', 'User' => 'ri-user-3-line', 'Group' => 'ri-team-line', 'ShareLink' => 'ri-links-line', 'StorageLocation' => 'ri-hard-drive-3-line', 'Invitation' => 'ri-mail-line'];
 @endphp
 
 <div class="animate-rise">

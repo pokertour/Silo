@@ -2,7 +2,7 @@
     <x-ui.page-header :eyebrow="__('app.Administration')" :title="__('app.Invitations')" :subtitle="__('app.Générez des jetons d\'accès pour inviter de nouveaux utilisateurs.')" />
 
     <section class="card relative overflow-hidden p-5 sm:p-6">
-        <div class="pointer-events-none absolute -top-10 -right-10 opacity-60"><x-ui.disc size="xl" os="mac" class="animate-spin-slow" /></div>
+        
         <div class="relative max-w-2xl">
             <h2 class="panel-title mb-4"><i class="ri-mail-send-line text-accent-ink"></i>{{ __('app.Nouvelle invitation') }}</h2>
             <div class="flex flex-col gap-2 sm:flex-row">
@@ -44,7 +44,7 @@
                     <div class="flex items-start justify-between gap-3">
                         <div class="min-w-0">
                             <p class="truncate text-sm font-medium text-ink">{{ $invitation->email ?: '—' }}</p>
-                            <p class="mt-1 font-mono text-[11px] break-all text-ink-3">{{ $invitation->token }}</p>
+                            <p class="mt-1 font-code text-[11px] break-all text-ink-3">{{ $invitation->token }}</p>
                         </div>
                         @if ($state === 'used')
                             <span class="badge badge-ok"><i class="ri-user-follow-line"></i>{{ __('app.Utilisée') }}</span>

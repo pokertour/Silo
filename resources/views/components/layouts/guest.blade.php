@@ -5,8 +5,6 @@
     @livewireStyles
 </head>
 <body x-data class="min-h-dvh">
-    <div class="pointer-events-none fixed inset-0 -z-10 backdrop-dots [mask-image:radial-gradient(circle_at_center,black,transparent_75%)]" aria-hidden="true"></div>
-    <div class="halo pointer-events-none fixed inset-0 -z-10" aria-hidden="true"></div>
 
     <div class="flex min-h-dvh flex-col">
         <header class="flex items-center justify-between px-5 py-5 sm:px-8">
@@ -21,7 +19,7 @@
         <main class="flex flex-1 items-center justify-center px-4 py-8">
             {{ $slot }}
         </main>
-        <footer class="px-8 py-6 text-center font-mono text-[11px] tracking-wider text-ink-3 uppercase">
+        <footer class="px-8 py-6 text-center text-xs text-ink-3">
             {{ \App\Models\SystemSetting::get('app_name', 'Silo') }} · {{ __('app.Coffre-fort d\'images disque') }}
         </footer>
     </div>

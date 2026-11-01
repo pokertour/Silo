@@ -1,19 +1,12 @@
 <div class="relative w-full max-w-[420px] animate-rise">
-    {{-- Décor : disques en orbite derrière la carte --}}
-    <div class="pointer-events-none absolute -top-24 -right-28 -z-10 opacity-60 blur-[1px]" aria-hidden="true">
-        <x-ui.disc size="xl" os="linux" class="animate-spin-slow" />
-    </div>
-    <div class="pointer-events-none absolute -bottom-16 -left-24 -z-10 opacity-40" aria-hidden="true">
-        <x-ui.disc size="lg" os="windows" class="animate-spin-slow" />
-    </div>
 
     <div class="card p-7 sm:p-9">
+        <x-ui.mark :size="56" class="mb-6" />
         @if (! $requiresTwoFactor)
             <p class="eyebrow mb-3">{{ __('app.Accès sécurisé') }}</p>
             <h1 class="font-display text-3xl font-semibold text-ink">{{ __('app.Bon retour') }}</h1>
             <p class="mt-1.5 text-sm text-ink-2">{{ __('app.Connectez-vous pour accéder à vos images disque.') }}</p>
         @else
-            <span class="mb-5 grid size-12 place-items-center rounded-2xl bg-accent-soft text-2xl text-accent-ink"><i class="ri-shield-keyhole-line"></i></span>
             <h1 class="font-display text-3xl font-semibold text-ink">{{ __('app.Vérification') }}</h1>
             <p class="mt-1.5 text-sm text-ink-2">{{ __('app.Saisissez le code de votre application d\'authentification ou un code de secours.') }}</p>
         @endif

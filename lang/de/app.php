@@ -639,4 +639,7 @@ return [
     'visibles par tous' => 'für alle sichtbar',
     'vous' => 'Sie',
     'Sélectionner' => 'Auswählen',
+    'Ajouté par' => 'Hinzugefügt von',
+    'Obtenir' => 'Laden',
+    'sur' => 'von',
 ];

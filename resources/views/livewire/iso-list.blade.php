@@ -22,7 +22,7 @@
     </x-ui.page-header>
 
     {{-- Barre d'outils --}}
-    <div class="card relative z-20 p-3">
+    <div class="relative z-20">
         <div class="flex flex-col gap-2 lg:flex-row">
             <label class="relative flex-1">
                 <i class="ri-search-line pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-lg text-ink-3"></i>
@@ -35,7 +35,7 @@
                 <x-custom-select wire:model.live="sortBy" :options="$sortOptions" icon="ri-sort-desc" />
             </div>
         </div>
-        <div class="scrollbar-none mt-3 flex gap-2 overflow-x-auto border-t border-line pt-3">
+        <div class="scrollbar-none mt-3 overflow-x-auto"><div class="segmented">
             <button type="button" wire:click="$set('filter', 'all')" @class(['chip', 'is-active' => $filter === 'all'])>{{ __('app.Tous') }}</button>
             <button type="button" wire:click="$set('filter', 'public')" @class(['chip', 'is-active' => $filter === 'public'])><i class="ri-global-line"></i>{{ __('app.Publics') }}</button>
             @foreach ($groups as $group)
@@ -43,7 +43,7 @@
                     <i class="ri-lock-2-line"></i>{{ $group->name }}
                 </button>
             @endforeach
-        </div>
+        </div></div>
     </div>
 
     {{-- Grille --}}
@@ -57,7 +57,7 @@
                 @endif
             </x-ui.empty>
         @else
-            <div class="grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
+            <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 @foreach ($isos as $file)
                     <x-file-card :file="$file"
                                  :duplicate="$file->checksum && in_array($file->checksum, $duplicateChecksums)"
@@ -71,7 +71,7 @@
 
     {{-- Dock de sélection multiple --}}
     @if (count($selected) > 0)
-        <div class="fixed inset-x-3 bottom-24 z-30 mx-auto max-w-3xl animate-rise lg:bottom-6 lg:left-[264px] lg:px-10">
+        <div class="fixed inset-x-3 bottom-24 z-30 mx-auto max-w-3xl animate-rise lg:bottom-6 lg:left-[250px] lg:px-10">
             <div class="flex flex-col gap-3 rounded-2xl border border-line-strong bg-elevated/95 p-3 shadow-2xl backdrop-blur-xl sm:flex-row sm:items-center">
                 <div class="flex items-center gap-3 pl-1">
                     <span class="grid h-8 min-w-8 place-items-center rounded-lg bg-accent px-2 font-mono text-sm font-bold text-on-accent">{{ count($selected) }}</span>

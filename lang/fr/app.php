@@ -633,4 +633,7 @@ return [
     'visibles par tous' => 'visibles par tous',
     'vous' => 'vous',
     'Sélectionner' => 'Sélectionner',
+    'Ajouté par' => 'Ajouté par',
+    'Obtenir' => 'Obtenir',
+    'sur' => 'sur',
 ];
