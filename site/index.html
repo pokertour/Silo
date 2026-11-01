@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Silo — Self-hosted vault for disk images</title>
+    <meta name="description" content="Silo is a self-hosted web app to upload, organize and share disk images (ISO, QCOW2, VMDK, IMG…) with groups, expiring share links and two-factor authentication.">
+    <meta property="og:title" content="Silo — Self-hosted vault for disk images">
+    <meta property="og:description" content="Upload, organize and share ISOs, VM disks and large archives. Resumable uploads, groups, secure share links, 2FA.">
+    <meta property="og:image" content="screenshots/dashboard.jpg">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="favicon.ico">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="glow glow-1" aria-hidden="true"></div>
+    <div class="glow glow-2" aria-hidden="true"></div>
+
+    <header class="nav">
+        <div class="container nav-inner">
+            <a class="brand" href="#top">
+                <img src="assets/logo.svg" alt="" width="32" height="32">
+                <span>Silo</span>
+            </a>
+            <nav class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#tour">Tour</a>
+                <a href="#install">Install</a>
+                <a class="btn btn-ghost btn-sm" href="https://github.com/pokertour/Silo">
+                    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                    GitHub
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="top">
+        <!-- Hero -->
+        <section class="hero container">
+            <span class="pill">Open source · Self-hosted · Docker ready</span>
+            <h1>The vault for your<br><span class="gradient-text">disk images</span></h1>
+            <p class="lead">
+                Upload, organize and share ISOs, VM disks and large archives from one place.
+                Resumable uploads, SHA-256 integrity, fine-grained access and expiring share links —
+                on your own infrastructure.
+            </p>
+            <div class="hero-actions">
+                <a class="btn btn-primary" href="#install">Get started</a>
+                <a class="btn btn-ghost" href="https://github.com/pokertour/Silo">View on GitHub</a>
+            </div>
+            <div class="formats" aria-label="Supported formats">
+                <code>iso</code><code>img</code><code>qcow2</code><code>vmdk</code><code>vhdx</code><code>vhd</code><code>wim</code><code>esd</code><code>raw</code><code>zip</code><code>7z</code><code>tar.gz</code><code>xz</code>
+            </div>
+            <figure class="hero-shot shot" data-lightbox>
+                <img src="screenshots/dashboard.jpg" alt="Silo dashboard showing storage statistics and the latest disk images" width="1440" height="900">
+            </figure>
+        </section>
+
+        <!-- Features -->
+        <section id="features" class="section container">
+            <h2 class="section-title">Everything you need to run an image library</h2>
+            <p class="section-lead">Built for IT teams, homelabs and anyone tired of hunting for the right installer on a shared drive.</p>
+
+            <div class="feature-grid">
+                <article class="feature">
+                    <div class="icon">⇪</div>
+                    <h3>Resumable uploads</h3>
+                    <p>Drag &amp; drop files of any size. Chunked uploads survive network hiccups and pick up where they left off.</p>
+                </article>
+                <article class="feature">
+                    <div class="icon">↓</div>
+                    <h3>Import from URL</h3>
+                    <p>Paste a link and let the server fetch the image in the background. You get a notification when it is ready.</p>
+                </article>
+                <article class="feature">
+                    <div class="icon">#</div>
+                    <h3>SHA-256 integrity</h3>
+                    <p>Checksums are computed automatically, verified against the vendor's hash and searchable. Duplicates are flagged.</p>
+                </article>
+                <article class="feature">
+                    <div class="icon">⛓</div>
+                    <h3>Secure share links</h3>
+                    <p>Share with anyone using links protected by a password, an expiration date and a download limit.</p>
+                </article>
+                <article class="feature">
+                    <div class="icon">◎</div>
+                    <h3>Groups &amp; roles</h3>
+                    <p>Keep files public to your organization or restricted to a group. Invitation-only sign-up and two-factor authentication.</p>
+                </article>
+                <article class="feature">
+                    <div class="icon">☁</div>
+                    <h3>Any storage</h3>
+                    <p>Local disk, NFS, Amazon S3 or any S3-compatible service, FTP and SFTP. Credentials are encrypted at rest.</p>
+                </article>
+                <article class="feature">
+                    <div class="icon">↻</div>
+                    <h3>Resumable downloads</h3>
+                    <p>HTTP Range support and a built-in download manager, so a 10&nbsp;GB image never has to start over.</p>
+                </article>
+                <article class="feature">
+                    <div class="icon">≡</div>
+                    <h3>Audit log</h3>
+                    <p>Every change is recorded with its author. Usage statistics show storage capacity and what your team relies on.</p>
+                </article>
+                <article class="feature">
+                    <div class="icon">⚑</div>
+                    <h3>4 languages</h3>
+                    <p>English, French, Spanish and German, picked automatically from the browser. Custom name, logo and accent color.</p>
+                </article>
+            </div>
+        </section>
+
+        <!-- Tour -->
+        <section id="tour" class="section container">
+            <h2 class="section-title">Take the tour</h2>
+            <p class="section-lead">Real screenshots, generated automatically from a demo instance on every release.</p>
+
+            <div class="showcase">
+                <div class="showcase-text">
+                    <span class="eyebrow">Library</span>
+                    <h3>Find the right image in seconds</h3>
+                    <p>Search by name or paste a SHA-256 hash, filter by group or tag, sort by date or size. Select several files to move or delete them in one go.</p>
+                </div>
+                <figure class="shot" data-lightbox><img src="screenshots/library.jpg" alt="Disk image library with search, filters and tags" loading="lazy" width="1440" height="900"></figure>
+            </div>
+
+            <div class="showcase reverse">
+                <div class="showcase-text">
+                    <span class="eyebrow">Details</span>
+                    <h3>Know exactly what you are installing</h3>
+                    <p>Version, architecture, verified checksum, share links and the full history of every file — on a single page.</p>
+                </div>
+                <figure class="shot" data-lightbox><img src="screenshots/detail.jpg" alt="Disk image detail page with checksum verification and activity history" loading="lazy" width="1440" height="900"></figure>
+            </div>
+
+            <div class="showcase">
+                <div class="showcase-text">
+                    <span class="eyebrow">Sharing</span>
+                    <h3>Share outside your team, safely</h3>
+                    <p>Generate a link with an optional password, expiration date and download limit. Recipients get a clean download page — and you get notified.</p>
+                </div>
+                <figure class="shot" data-lightbox><img src="screenshots/share-public.jpg" alt="Public download page of a shared disk image" loading="lazy" width="1440" height="900"></figure>
+            </div>
+
+            <div class="showcase reverse">
+                <div class="showcase-text">
+                    <span class="eyebrow">Upload</span>
+                    <h3>Built for multi-gigabyte files</h3>
+                    <p>Upload from your browser with automatic resume, or import straight from a vendor URL. Provide the expected hash and Silo verifies it for you.</p>
+                </div>
+                <figure class="shot" data-lightbox><img src="screenshots/upload.jpg" alt="Upload form with drag and drop area and metadata fields" loading="lazy" width="1440" height="900"></figure>
+            </div>
+
+            <div class="showcase">
+                <div class="showcase-text">
+                    <span class="eyebrow">Administration</span>
+                    <h3>Keep an eye on your infrastructure</h3>
+                    <p>Storage usage and capacity per location, OS distribution, users, groups, invitations and a complete audit log.</p>
+                </div>
+                <figure class="shot" data-lightbox><img src="screenshots/admin-stats.jpg" alt="Administration dashboard with storage usage and statistics" loading="lazy" width="1440" height="900"></figure>
+            </div>
+
+            <h3 class="gallery-title">More screens</h3>
+            <div class="gallery">
+                <figure class="shot" data-lightbox><img src="screenshots/share-modal.jpg" alt="Share link creation dialog" loading="lazy" width="1440" height="900"><figcaption>Share link options</figcaption></figure>
+                <figure class="shot" data-lightbox><img src="screenshots/share-links.jpg" alt="List of share links" loading="lazy" width="1440" height="900"><figcaption>All share links</figcaption></figure>
+                <figure class="shot" data-lightbox><img src="screenshots/admin-storage.jpg" alt="Storage locations settings" loading="lazy" width="1440" height="900"><figcaption>Storage locations</figcaption></figure>
+                <figure class="shot" data-lightbox><img src="screenshots/admin-groups.jpg" alt="Group management" loading="lazy" width="1440" height="900"><figcaption>Groups</figcaption></figure>
+                <figure class="shot" data-lightbox><img src="screenshots/admin-users.jpg" alt="User management" loading="lazy" width="1440" height="900"><figcaption>Users</figcaption></figure>
+                <figure class="shot" data-lightbox><img src="screenshots/admin-invitations.jpg" alt="Invitations management" loading="lazy" width="1440" height="900"><figcaption>Invitations</figcaption></figure>
+                <figure class="shot" data-lightbox><img src="screenshots/admin-audit.jpg" alt="Audit log" loading="lazy" width="1440" height="900"><figcaption>Audit log</figcaption></figure>
+                <figure class="shot" data-lightbox><img src="screenshots/profile.jpg" alt="Profile page with two-factor authentication" loading="lazy" width="1440" height="900"><figcaption>Profile &amp; 2FA</figcaption></figure>
+                <figure class="shot" data-lightbox><img src="screenshots/login.jpg" alt="Sign-in page" loading="lazy" width="1440" height="900"><figcaption>Sign in</figcaption></figure>
+            </div>
+
+            <div class="mobile-row">
+                <figure class="phone" data-lightbox><img src="screenshots/mobile-dashboard.jpg" alt="Silo dashboard on a phone" loading="lazy" width="390" height="844"></figure>
+                <div>
+                    <span class="eyebrow">Responsive</span>
+                    <h3>Works on every screen</h3>
+                    <p>Check a checksum or grab a share link from your phone in the server room.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Install -->
+        <section id="install" class="section container">
+            <h2 class="section-title">Up and running in minutes</h2>
+            <p class="section-lead">One container with everything included: FrankenPHP, Redis, queue worker and scheduler.</p>
+
+            <ol class="steps">
+                <li>
+                    <h3>Download the compose file and the environment template</h3>
+                    <pre><code>curl -O https://raw.githubusercontent.com/pokertour/Silo/main/docker-compose.yml
+curl -o .env https://raw.githubusercontent.com/pokertour/Silo/main/.env.example</code><button class="copy" type="button">Copy</button></pre>
+                </li>
+                <li>
+                    <h3>Set <code>APP_KEY</code>, <code>APP_URL</code>, <code>DB_PASSWORD</code> and <code>DB_ROOT_PASSWORD</code> in <code>.env</code></h3>
+                    <pre><code>echo "APP_KEY=base64:$(openssl rand -base64 32)"
+openssl rand -base64 32   # for each database password</code><button class="copy" type="button">Copy</button></pre>
+                </li>
+                <li>
+                    <h3>Start Silo and create the administrator</h3>
+                    <pre><code>docker compose up -d
+docker compose exec app php artisan db:seed --force</code><button class="copy" type="button">Copy</button></pre>
+                    <p>Open <code>http://localhost:8080</code>, sign in with the generated password, then enable two-factor authentication.</p>
+                </li>
+            </ol>
+
+            <div class="cta">
+                <div>
+                    <h3>Ready to tidy up your images?</h3>
+                    <p>Read the documentation, star the project or open an issue on GitHub.</p>
+                </div>
+                <a class="btn btn-primary" href="https://github.com/pokertour/Silo#readme">Read the docs</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-inner">
+            <div class="brand">
+                <img src="assets/logo.svg" alt="" width="24" height="24">
+                <span>Silo</span>
+            </div>
+            <p>Built with Laravel, Livewire and Tailwind CSS · <a href="https://github.com/pokertour/Silo">github.com/pokertour/Silo</a></p>
+        </div>
+    </footer>
+
+    <dialog id="lightbox" aria-label="Screenshot preview">
+        <button class="lightbox-close" type="button" aria-label="Close">×</button>
+        <img alt="">
+    </dialog>
+
+    <script>
+        // Agrandissement des captures
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = lightbox.querySelector('img');
+        document.querySelectorAll('[data-lightbox] img').forEach((img) => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightbox.showModal();
+            });
+        });
+        lightbox.addEventListener('click', () => lightbox.close());
+
+        // Boutons « Copy » des blocs de code
+        document.querySelectorAll('pre .copy').forEach((button) => {
+            button.addEventListener('click', async () => {
+                await navigator.clipboard.writeText(button.previousElementSibling.textContent);
+                button.textContent = 'Copied!';
+                setTimeout(() => (button.textContent = 'Copy'), 1500);
+            });
+        });
+
+        // Une capture absente (génération en échec) ne laisse pas d'image cassée
+        document.querySelectorAll('[data-lightbox] img').forEach((img) => {
+            img.addEventListener('error', () => img.closest('[data-lightbox]').remove());
+        });
+    </script>
+</body>
+</html>
