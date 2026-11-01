@@ -166,7 +166,11 @@ php artisan test
 
 ## 🚢 Publication
 
-Pousser un tag `v*` construit l'image Docker et la publie sur GitHub Container Registry sous `ghcr.io/pokertour/silo:<tag>` et `:latest`.
+Les versions sont publiées sur GitHub Container Registry sous `ghcr.io/pokertour/silo:<version>` (et `:latest` pour les versions stables). Deux façons de publier :
+
+**Depuis GitHub (recommandé) :** **Actions → Build and Push Docker Image → Run workflow**, saisissez la version (ex. `v1.2.0`) et lancez. Le workflow construit et publie l'image, puis crée le tag git et la release GitHub correspondants avec des notes générées automatiquement. Les pré-versions comme `v1.3.0-beta.1` ne sont jamais taguées `latest`.
+
+**En ligne de commande :** poussez un tag `v*`.
 
 ```bash
 git tag v1.0.0

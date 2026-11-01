@@ -166,7 +166,11 @@ php artisan test
 
 ## 🚢 Releases
 
-Pushing a `v*` tag builds the Docker image and publishes it to GitHub Container Registry as `ghcr.io/pokertour/silo:<tag>` and `:latest`.
+Releases are published to GitHub Container Registry as `ghcr.io/pokertour/silo:<version>` (and `:latest` for stable versions). Two ways to publish:
+
+**From GitHub (recommended):** go to **Actions → Build and Push Docker Image → Run workflow**, enter the version (e.g. `v1.2.0`) and run. The workflow builds and pushes the image, then creates the matching git tag and GitHub release with auto-generated notes. Pre-releases such as `v1.3.0-beta.1` are never tagged `latest`.
+
+**From the command line:** push a `v*` tag.
 
 ```bash
 git tag v1.0.0
