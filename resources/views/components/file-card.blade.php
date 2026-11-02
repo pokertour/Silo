@@ -19,6 +19,9 @@
                 <span class="badge badge-warn h-5 px-2 text-[11px]">{{ __('app.Doublon') }}</span>
             @endif
         </div>
+        @if ($version)
+            <span class="badge badge-accent absolute bottom-2 left-2.5 h-5 max-w-[60%] truncate px-2 font-mono text-[11px]" title="{{ __('app.Version') }} {{ $file->version }}">{{ $version }}</span>
+        @endif
         @if ($extension)
             <span class="absolute right-3 bottom-2.5 text-[10.5px] font-semibold tracking-wide text-ink-3 uppercase">{{ $extension }}</span>
         @endif
@@ -44,9 +47,6 @@
 
     <div class="min-h-3 flex-1"></div>
     <div class="relative z-10 flex items-center gap-1 px-1 pt-1">
-        @if ($version)
-            <span class="badge badge-accent max-w-[45%] truncate font-mono" title="{{ __('app.Version') }} {{ $file->version }}">{{ $version }}</span>
-        @endif
         <span class="badge font-mono">{{ $file->size_human }}</span>
         <div class="ml-auto flex items-center">
             @can('share', $file)
