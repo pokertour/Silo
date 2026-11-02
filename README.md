@@ -130,6 +130,7 @@ The Docker image ships with production defaults (`APP_NAME=Silo`, `APP_ENV=produ
 | `TRUSTED_PROXIES` | private networks | Reverse proxies allowed to send `X-Forwarded-*` headers. Use `*` only if Silo is reachable **exclusively** through your proxy. |
 | `SESSION_SECURE_COOKIE` | `true` | Keep enabled when served over HTTPS. |
 | `MAIL_MAILER`, `MAIL_HOST`, … | `log` | Fallback SMTP settings. Easier: configure SMTP from **Admin → Settings → Email** (password encrypted, test button). |
+| `UPLOAD_CHUNK_SIZE_MB` | `5` | Size of upload chunks. Larger chunks mean fewer requests; your reverse proxy must accept request bodies that large (nginx: `client_max_body_size`). |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | random password | Initial administrator created by the seeder. |
 
 Storage locations (local, NFS, S3, FTP, SFTP) are managed from **Admin → Settings → Storage**, not from the environment. Upload limits are set in [`custom.ini`](custom.ini) (50 GB by default).
@@ -150,6 +151,17 @@ Secrets (client secret, bind password) are encrypted with `APP_KEY`.
 - **Serve Silo over HTTPS** and set `TRUSTED_PROXIES` to your reverse proxy's address so rate limiting sees real client IPs.
 - **Database**: the compose file does not expose MariaDB on the host and refuses to start without `DB_PASSWORD` / `DB_ROOT_PASSWORD`.
 - **Back up `APP_KEY`**: it encrypts storage credentials and 2FA secrets. Changing it makes them unreadable.
+
+- **CrowdSec / fail2ban**: uploads are split into many requests to `/upload-chunk`. If your IDS still flags them, whitelist that path (it requires a signed-in user), e.g. a CrowdSec parser whitelist in `/etc/crowdsec/parsers/s02-enrich/silo-whitelist.yaml`:
+
+  ```yaml
+  name: silo/upload-whitelist
+  description: "Silo resumable uploads"
+  whitelist:
+    reason: "Silo chunked uploads"
+    expression:
+      - evt.Meta.http_path startsWith '/upload-chunk'
+  ```
 
 Found a vulnerability? Please report it privately through [GitHub Security Advisories](https://github.com/pokertour/Silo/security/advisories/new) rather than opening a public issue.
 

@@ -75,7 +75,7 @@ test('les chunks d\'un utilisateur sont isolés de ceux des autres', function ()
         'resumableChunkNumber' => 1,
         'resumableTotalChunks' => 2,
         'resumableFilename' => 'test.iso',
-    ]))->assertNotFound();
+    ]))->assertNoContent();
 });
 
 test('un numéro de chunk supérieur au total est rejeté', function () {
@@ -92,4 +92,19 @@ test('la route upload-chunk exige une authentification', function () {
     auth()->logout();
 
     $this->post(route('upload.chunk'), [])->assertRedirect(route('login'));
+});
+
+test('le test d\'un chunk absent répond 204 et non 404', function () {
+    $query = [
+        'resumableIdentifier' => 'probe_id',
+        'resumableChunkNumber' => 1,
+        'resumableTotalChunks' => 2,
+        'resumableFilename' => 'test.iso',
+    ];
+
+    $this->get(route('upload.chunk', $query))->assertNoContent();
+
+    Storage::disk('local')->put("chunks/{$this->user->id}/probe_id/1.part", 'data');
+
+    $this->get(route('upload.chunk', $query))->assertOk()->assertJson(['status' => 'exists']);
 });

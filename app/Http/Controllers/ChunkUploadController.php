@@ -36,7 +36,10 @@ class ChunkUploadController extends Controller
         if ($request->isMethod('get')) {
             $exists = $disk->exists("{$tempPath}/{$chunkNumber}.part");
 
-            return $exists ? response()->json(['status' => 'exists']) : response()->json(['status' => 'not_found'], 404);
+            // Chunk absent : 204 et non 404. Resumable.js renvoie le chunk pour tout
+            // statut autre que 200/201, et une rafale de 404 (une par chunk) est
+            // prise pour un scan par les IDS comme CrowdSec (http-probing).
+            return $exists ? response()->json(['status' => 'exists']) : response()->noContent();
         }
 
         $chunk = $request->file('file');
