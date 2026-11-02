@@ -75,7 +75,7 @@ test('les chunks d\'un utilisateur sont isolés de ceux des autres', function ()
         'resumableChunkNumber' => 1,
         'resumableTotalChunks' => 2,
         'resumableFilename' => 'test.iso',
-    ]))->assertNotFound();
+    ]))->assertNoContent();
 });
 
 test('un numéro de chunk supérieur au total est rejeté', function () {
