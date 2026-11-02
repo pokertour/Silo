@@ -66,7 +66,9 @@ Route::middleware(['auth', 'auth.session'])->group(function () {
     Route::get('/isos/{isoFile}', IsoDetail::class)->name('isos.show');
     Route::get('/upload', Upload::class)->name('upload');
     Route::match(['get', 'post'], '/upload-chunk', [ChunkUploadController::class, 'upload'])
-        ->middleware('throttle:600,1')
+        // Un test (GET) puis un envoi (POST) par chunk, 3 en parallèle : sur un
+        // réseau local rapide, 600/min déclenchait des 429 en plein upload.
+        ->middleware('throttle:3000,1')
         ->name('upload.chunk');
     Volt::route('/profile', 'profile')->name('profile');
     Route::get('/share-links', ShareLinks::class)->name('share-links');

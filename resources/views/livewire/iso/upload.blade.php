@@ -206,7 +206,7 @@
                 initResumable() {
                     const r = new Resumable({
                         target: @js(route('upload.chunk')),
-                        chunkSize: 5 * 1024 * 1024,
+                        chunkSize: @js(config('upload.chunk_size_mb')) * 1024 * 1024,
                         simultaneousUploads: 3,
                         testChunks: true,
                         throttleProgressCallbacks: 1,

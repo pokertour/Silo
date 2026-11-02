@@ -93,3 +93,18 @@ test('la route upload-chunk exige une authentification', function () {
 
     $this->post(route('upload.chunk'), [])->assertRedirect(route('login'));
 });
+
+test('le test d\'un chunk absent répond 204 et non 404', function () {
+    $query = [
+        'resumableIdentifier' => 'probe_id',
+        'resumableChunkNumber' => 1,
+        'resumableTotalChunks' => 2,
+        'resumableFilename' => 'test.iso',
+    ];
+
+    $this->get(route('upload.chunk', $query))->assertNoContent();
+
+    Storage::disk('local')->put("chunks/{$this->user->id}/probe_id/1.part", 'data');
+
+    $this->get(route('upload.chunk', $query))->assertOk()->assertJson(['status' => 'exists']);
+});

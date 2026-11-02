@@ -130,6 +130,7 @@ L'image Docker embarque des valeurs par défaut de production (`APP_NAME=Silo`, 
 | `TRUSTED_PROXIES` | réseaux privés | Reverse proxies autorisés à envoyer les en-têtes `X-Forwarded-*`. N'utilisez `*` que si Silo n'est joignable **que** via votre proxy. |
 | `SESSION_SECURE_COOKIE` | `true` | À laisser activé en HTTPS. |
 | `MAIL_MAILER`, `MAIL_HOST`, … | `log` | Paramètres SMTP de repli. Plus simple : configurez le SMTP depuis **Admin → Paramètres → E-mail** (mot de passe chiffré, bouton de test). |
+| `UPLOAD_CHUNK_SIZE_MB` | `5` | Taille des morceaux d'upload. Plus grands = moins de requêtes ; le proxy inverse doit accepter des corps de cette taille (nginx : `client_max_body_size`). |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | mot de passe aléatoire | Administrateur initial créé par le seeder. |
 
 Les emplacements de stockage (local, NFS, S3, FTP, SFTP) se gèrent depuis **Admin → Paramètres → Stockage**, pas via l'environnement. Les limites d'upload sont définies dans [`custom.ini`](custom.ini) (50 Go par défaut).
@@ -150,6 +151,17 @@ Les secrets (client secret, mot de passe du compte de service) sont chiffrés av
 - **Servez Silo en HTTPS** et indiquez l'adresse de votre reverse proxy dans `TRUSTED_PROXIES` pour que les limitations de débit voient les vraies IP clientes.
 - **Base de données** : le fichier compose n'expose pas MariaDB sur l'hôte et refuse de démarrer sans `DB_PASSWORD` / `DB_ROOT_PASSWORD`.
 - **Sauvegardez `APP_KEY`** : elle chiffre les identifiants de stockage et les secrets 2FA. La changer les rend illisibles.
+
+- **CrowdSec / fail2ban** : les uploads sont découpés en nombreuses requêtes vers `/upload-chunk`. Si votre IDS les signale encore, mettez ce chemin en liste blanche, par exemple avec une whitelist de parser CrowdSec dans `/etc/crowdsec/parsers/s02-enrich/silo-whitelist.yaml` :
+
+  ```yaml
+  name: silo/upload-whitelist
+  description: "Silo resumable uploads"
+  whitelist:
+    reason: "Silo chunked uploads"
+    expression:
+      - evt.Meta.http_path startsWith '/upload-chunk'
+  ```
 
 Vous avez trouvé une vulnérabilité ? Signalez-la en privé via les [GitHub Security Advisories](https://github.com/pokertour/Silo/security/advisories/new) plutôt que dans une issue publique.
 
