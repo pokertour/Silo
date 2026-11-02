@@ -2,6 +2,7 @@
 @props(['file', 'duplicate' => false, 'selectable' => false])
 @php
     $extension = pathinfo($file->file_path, PATHINFO_EXTENSION);
+    $version = filled($file->version) ? 'v'.ltrim(trim($file->version), 'vV') : null;
     $details = collect([$file->os_type, $file->architecture, $file->group?->name ?? __('app.Public')])->filter()->implode(' · ');
 @endphp
 <article wire:key="file-card-{{ $file->id }}" {{ $attributes->merge(['class' => 'card card-hover group relative flex flex-col p-3.5 has-[input:checked]:ring-2 has-[input:checked]:ring-accent']) }}>
@@ -43,6 +44,9 @@
 
     <div class="min-h-3 flex-1"></div>
     <div class="relative z-10 flex items-center gap-1 px-1 pt-1">
+        @if ($version)
+            <span class="badge badge-accent max-w-[45%] truncate font-mono" title="{{ __('app.Version') }} {{ $file->version }}">{{ $version }}</span>
+        @endif
         <span class="badge font-mono">{{ $file->size_human }}</span>
         <div class="ml-auto flex items-center">
             @can('share', $file)

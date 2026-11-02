@@ -5,7 +5,7 @@
         <x-ui.disc :file="$file" size="sm" />
         <div class="min-w-0">
             <a href="{{ route('isos.show', $file) }}" wire:navigate class="block truncate font-medium text-ink after:absolute after:inset-0">{{ $file->name }}</a>
-            <p class="truncate font-mono text-[11.5px] text-ink-3">{{ collect([$file->os_type, $file->version ? 'v'.$file->version : null, $file->architecture, $file->user?->name])->filter()->implode(' · ') }}</p>
+            <p class="truncate font-mono text-[11.5px] text-ink-3">{{ collect([$file->os_type, filled($file->version) ? 'v'.ltrim(trim($file->version), 'vV') : null, $file->architecture, $file->user?->name])->filter()->implode(' · ') }}</p>
         </div>
     </div>
     <div class="relative z-10 hidden flex-wrap gap-1.5 xl:flex"><x-file-status :file="$file" :duplicate="$duplicate" /></div>
